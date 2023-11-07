@@ -34,8 +34,8 @@ const activeInactiveStyle = computed(() =>
 
 const activeInactiveLiStyle = computed(() =>
     props.item.route && route().current(props.item.route)
-        ? "border-t border-b border-l text-white font-medium border-slate-300/30 bg-gray-400 mb-1 rounded-l-lg dark:bg-blue-700"
-        : "font-normal"
+        ? "border-t border-b border-l border-slate-50 dark:border-slate-800 shadow-inner text-gray-800 font-medium bg-blue-700 mb-1 rounded-l-lg dark:bg-blue-700"
+        : "font-normal shadow"
 );
 
 const emit = defineEmits(["menu-click"]);

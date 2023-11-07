@@ -4,7 +4,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ImageController;
+use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::group(['prefix' => 'users'], function () {
         // Route::resource('users', UserController::class);
         Route::get('/', [UserController::class, 'index'])->name('user.index');
+        Route::get('/sampleuser', [UserController::class, 'sample_user'])->name('user.sample');
         Route::get('create', [UserController::class, 'create'])->name('user.create');
         Route::post('store', [UserController::class, 'store'])->name('user.store');
         Route::get('{user}/edit', [UserController::class, 'edit'])->name('user.edit');
@@ -47,7 +48,11 @@ Route::middleware('auth')->group(function () {
 
 // Images
 
-Route::get('/img/{path}', [ImageController::class, 'show'])
+Route::get('/test-front', function () {
+    return Inertia::render('Frontend/Index');
+});
+
+Route::get('/img/{path}', [ImagesController::class, 'show'])
     ->where('path', '.*')
     ->name('image');
 

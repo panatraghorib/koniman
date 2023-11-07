@@ -38,10 +38,10 @@ class UserController extends Controller
 
         $numberPaginate = request('perPage') ?? 10;
 
-        $users = QueryBuilder::for(User::class)
+        $users = QueryBuilder::for(User::whereNot('id', 1))
             ->defaultSort('id')
-            ->allowedSorts(['name', 'email'])
-            ->allowedFilters(['name', 'email', $globalSearch])
+            ->allowedSorts(['id', 'name', 'email'])
+            ->allowedFilters(['id', 'name', 'email', $globalSearch])
             ->paginate($numberPaginate)
             ->withQueryString();
 
@@ -54,7 +54,7 @@ class UserController extends Controller
                 $table
                     ->withGlobalSearch()
                     ->defaultSort('id')
-                    ->column(key: 'name', searchable: true, sortable: true, canBeHidden: true, label: 'nama')
+                    ->column(key: 'name', searchable: true, sortable: true, canBeHidden: false, label: 'Nama')
                     ->column(key: 'email', searchable: true, sortable: true)
                     ->column(key: 'email_verified_at', label: 'Bergabung')
                     ->column(label: 'Actions');
@@ -62,6 +62,14 @@ class UserController extends Controller
         );
     }
 
+
+    public function sample_user(Request $request): Response
+    {
+        return Inertia::render('Users/SampleUsers', [
+            'role' => Role::all(['id', 'name']),
+            'users' => User::tableSearch($request->input('searchObj'))
+        ]);
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -73,7 +81,7 @@ class UserController extends Controller
                 'id' => $role->id,
                 'label' => $role->name,
             ]),
-            'cabor' => Cabor::all()->map(fn ($cabor) => [
+            'cabor' => Cabor::all()->transform(fn ($cabor) => [
                 'id' => $cabor->id,
                 'label' => $cabor->cabor_name,
             ]),
@@ -86,6 +94,10 @@ class UserController extends Controller
     public function store(UserAddRequest $request)
     {
 
+        // $roles = ($request->roles) ?? [];
+        // dump($request->all());
+        // dump(array_map('intval', $roles));
+        // exit;
         DB::beginTransaction();
 
         $user = User::create([
@@ -95,14 +107,16 @@ class UserController extends Controller
             'name' => $request->name,
             'mobile' => $request->mobile,
             'date_of_birth' => $request->dateOfBirth,
-            'gender' => $request->gender['label'],
-            'organization_id' => !is_null($request->cabor) ? $request->cabor['id'] : 0,
+            'gender' => $request->gender['id'] ?? $request->gender,
+            'organization_id' => $request->cabor,
             'avatar' => $request->file('avatar') ? $request->file('avatar')->store('users') : null,
-            'created_by' => auth()->user(),
+            'created_by' => auth()->user()->id,
         ]);
 
-        $roles = $request->roles['label'] ?? [];
-        $user->assignRole($roles);
+        if ($request->has('roles')) {
+            $roles = ($request->roles) ?? [];
+            $user->assignRole(array_map('intval', $roles));
+        }
 
         activity('User')
             ->causedBy(auth()->user()->id ?? null)
@@ -115,8 +129,8 @@ class UserController extends Controller
         DB::rollBack();
 
         return redirect()->route('user.index')->with('message', [
-            'type' => 'success',
-            'text' => 'User berhasil ditambahkan!',
+            'type' => 'error',
+            'text' => 'User telah ditambah!',
         ]);
     }
 
@@ -146,10 +160,11 @@ class UserController extends Controller
                 'gender' => $user->gender,
                 'organization_id' => $user->organization_id,
                 // 'role' => $user->roles()->get(['id','name']),
-                'roles' => $user->roles()->first()->id ?? null,
-                'avatar' => $user->avatar ? URL::route('image', ['path' => $user->avatar, 'w' => 60, 'h' => 60, 'fit' => 'crop']) : null,
+                'roles' => $user->roles ?? null,
+                'avatar' => $user->avatar ? URL::route('image', ['path' => $user->avatar, 'w' => 100, 'h' => 100, 'fit' => 'crop']) : null,
                 'created_by' => $user->created_by,
             ],
+
             'roles' => $roles->map(fn ($role) => [
                 'id' => $role->id,
                 'label' => $role->name,
@@ -166,17 +181,16 @@ class UserController extends Controller
      */
     public function update(UserUpdateRequest $request, User $user)
     {
-        // dump($request->all());
-        // exit;
 
-        $user->update($request->only(
-            'email',
-            'username',
-            'name',
-            'mobile',
-            // 'dateOfBirth',
-            'cabor',
-        ));
+        DB::beginTransaction();
+        $user->update([
+            'email' => $request->email,
+            'username' => $request->username,
+            'name' => $request->name,
+            'mobile' => $request->mobile,
+            'date_of_birth' => $request->dateOfBirth,
+            'organization_id' => $request->cabor,
+        ]);
 
         if (request()->file('avatar')) {
             $user->update(['avatar' => $request->file('avatar')->store('users')]);
@@ -186,6 +200,12 @@ class UserController extends Controller
             $user->update(['password' => $request->get('password')]);
         }
 
+        if ($request->has('roles') && !$user->hasRole('Superadmin')) {
+            $roles = $request->roles ?? [];
+            $user->syncRoles(array_map('intval', $roles));
+        }
+
+
         activity('User')
             ->causedBy(auth()->user()->id ?? null)
             ->withProperties(['attributes' => $user])
@@ -193,10 +213,12 @@ class UserController extends Controller
             ->event('created')
             ->log('User with Email' . $user->email . ' has been updated');
 
-        // return redirect()->back()->with('success', 'User updated.');
+        DB::commit();
+        DB::rollBack();
+
         return redirect()->route('user.index')->with('message', [
             'type' => 'success',
-            'text' => 'User berhasil diperbarui!',
+            'text' => 'User telah diperbarui!',
         ]);
     }
 

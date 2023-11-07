@@ -34,7 +34,8 @@ class User extends Authenticatable
         'gender',
         'date_of_birth',
         'organization_id',
-        'avatar'
+        'avatar',
+        'created_by',
     ];
 
     /**
@@ -54,8 +55,8 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'date_of_birth' => 'date',
         'password' => 'hashed',
+        'date_of_birth' => 'date',
     ];
 
     public function __construct(array $attributes = [])
@@ -69,9 +70,9 @@ class User extends Authenticatable
     {
         return Attribute::make(
             fn ($value) => ($value !== null)
-                ? (new \DateTime($value))->format('d/m/Y')
+                ? (new \DateTime($value))->format('Y-m-d')
                 : "",
-            // fn ($value) => Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d')
+            fn ($value) => (new \DateTime($value))->format('Y-m-d')
         );
     }
 }

@@ -32,6 +32,7 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
+            'nameInstansi' => env('INSTANSI_NAME','LaraTra'),
             'auth' => [
                 'user' => $request->user(),
             ],

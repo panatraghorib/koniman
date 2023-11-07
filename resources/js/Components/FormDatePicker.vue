@@ -14,19 +14,7 @@ const props = defineProps({
         type: String,
         default: null,
     },
-    autocomplete: {
-        type: String,
-        default: null,
-    },
-    maxlength: {
-        type: String,
-        default: null,
-    },
     placeholder: {
-        type: String,
-        default: null,
-    },
-    inputmode: {
         type: String,
         default: null,
     },
@@ -34,13 +22,9 @@ const props = defineProps({
         type: String,
         default: null,
     },
-    options: {
+    yearRange: {
         type: Array,
-        default: null,
-    },
-    type: {
-        type: String,
-        default: "text",
+        default: [1960, new Date().getFullYear()],
     },
     modelValue: {
         type: [Date, String],
@@ -89,6 +73,22 @@ const inputEl = ref(null);
 onMounted(() => {
     emit("setRef", inputEl.value);
 });
+
+// disable tanggal_lahir 16 tahun kebelakang
+
+const minimalOld = computed(() => {
+    const day = new Date();
+    const minimalOld = day.setDate(day.getDate() - 6881);
+    return new Date(minimalOld);
+});
+
+const format = (date) => {
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+};
 </script>
 
 <template>
@@ -98,9 +98,12 @@ onMounted(() => {
             :uid="id"
             :dark="darkModeStore.isEnabled"
             :enableTimePicker="enableTimePicker"
-            preview-format="dd/MM/yyyy"
-            format="dd/MM/yyyy"
+            :year-range="yearRange"
+            :max-date="minimalOld"
             :inputClassName="`h-10 text-sm border border-gray-400 dark:bg-slate-800 dark:border-slate-50/70`"
+            locale="id"
+            format="dd/MM/yyyy"
+            placeholder="Pilih Tanggal"
             auto-apply
         />
         <!-- <input

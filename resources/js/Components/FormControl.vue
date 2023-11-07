@@ -126,7 +126,7 @@ if (props.ctrlKFocus) {
     });
 }
 
-const defaultSelected = ref(null);
+const defaultSelected = ref("");
 </script>
 
 <template>
@@ -138,7 +138,7 @@ const defaultSelected = ref(null);
             :name="name"
             :class="inputElClass"
         >
-            <option disabled selected :value="defaultSelected">
+            <option value="" disabled selected class="italic">
                 -Pilih {{ name }}-
             </option>
             <option

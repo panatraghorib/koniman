@@ -18,12 +18,12 @@ class UserAddRequest extends FormRequest
         return true;
     }
 
-    public function prepareForValidation()
-    {
-        $this->merge([
-            'dateOfBirth' => Carbon::createFromFormat('d/m/Y', $this->dateOfBirth)->format('Y-m-d'),
-        ]);
-    }
+    // public function prepareForValidation()
+    // {
+    //     $this->merge([
+    //         'dateOfBirth' => Carbon::createFromFormat('d/m/Y H:i:s', $this->dateOfBirth)->format('Y-m-d'),
+    //     ]);
+    // }
     /**
      * Get the validation rules that apply to the request.
      *
@@ -37,7 +37,7 @@ class UserAddRequest extends FormRequest
             'password' => 'required|confirmed|min:6',
             'name' => 'required|string|max:255|min:3',
             'mobile' => ['unique:App\Models\User,mobile', new PhoneNumber],
-            'dateOfBirth' => ['required', 'string', new BirthDayShouldBe],
+            'dateOfBirth' => ['nullable', new BirthDayShouldBe],
             'roles' => 'required',
             'cabor' => 'required_if:roles.id,3'
         ];

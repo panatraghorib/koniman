@@ -22,6 +22,7 @@ import SectionTitleLineWithButton from "@/Components/SectionTitleLineWithButton.
 import FormCheckRadioGroup from "@/Components/FormCheckRadioGroup.vue";
 
 const data = defineProps({ roles: Object, cabor: Object });
+const InstansiHasCaborId = 3;
 
 // const namaLengkap = ref(null);
 
@@ -36,22 +37,12 @@ const form = useForm({
     password: "",
     password_confirmation: "",
     mobile: user.mobile,
-    dateOfBirth: user.date_of_birth,
+    dateOfBirth: new Date(user.date_of_birth) ?? new Date(""),
     gender: user.gender,
     avatar: user.avatar,
-    roles: user.roles,
+    roles: user.roles ? user.roles[0].id : "",
     cabor: user.organization_id,
 });
-
-const hasCabor = ref(false);
-const onRoleChange = (role) => {
-    if (role == 3) {
-        form.cabor = null;
-        hasCabor.value = true;
-    } else {
-        hasCabor.value = false;
-    }
-};
 
 function submit() {
     // form.post(`/users/update/${user.id}`, {
@@ -61,14 +52,17 @@ function submit() {
 
     form.transform((data) => ({
         ...data,
-        roles: data.roles !== null ? [data.roles] : "",
+        roles: [data.roles] ?? "",
+        cabor: data.roles !== InstansiHasCaborId ? "" : data.cabor,
     })).post(`/users/update/${user.id}`);
 }
+
+// TODO: kosongkan cabor pada saat edit dan piindah instansi
 </script>
 
 <template>
     <LayoutAuthenticated>
-        <Head :title="`${form.name} ${form.username}`" />
+        <Head :title="`${form.username}`" />
 
         <SectionMain>
             <SectionTitleLineWithButton
@@ -172,8 +166,8 @@ function submit() {
                     <FormControl
                         v-model="form.gender"
                         :options="[
-                            { id: 'Laki-Laki', label: 'Laki-Laki' },
-                            { id: 'Perempuan', label: 'Perempuan' },
+                            { id: 'LK', label: 'Laki-Laki' },
+                            { id: 'PR', label: 'Perempuan' },
                         ]"
                         name="Jenis Kelamin"
                         :error="form.errors.gender"
@@ -198,11 +192,10 @@ function submit() {
                         :options="data.roles"
                         name="hak akses"
                         :error="form.errors.roles"
-                        @change="onRoleChange($event.target.value)"
                     />
                 </FormField>
 
-                <div v-if="hasCabor">
+                <div v-if="form.roles == InstansiHasCaborId">
                     <FormField label="Organisasi/Cabor">
                         <FormControl
                             v-model="form.cabor"

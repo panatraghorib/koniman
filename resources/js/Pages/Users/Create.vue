@@ -1,6 +1,6 @@
 <script setup>
-import { reactive, ref } from "vue";
-import { Head, useForm } from "@inertiajs/vue3";
+import { ref } from "vue";
+import { Head, useForm, Link, usePage } from "@inertiajs/vue3";
 import {
     mdiBallotOutline,
     mdiAccount,
@@ -8,9 +8,9 @@ import {
     mdiArrowLeftCircle,
     mdiMail,
 } from "@mdi/js";
+
 import LayoutAuthenticated from "@/Layouts/LayoutAuthenticated.vue";
 import CardBox from "@/Components/CardBox.vue";
-
 import BaseButton from "@/Components/BaseButton.vue";
 import SectionMain from "@/Components/SectionMain.vue";
 import FormFilePicker from "@/Components/FormFilePicker.vue";
@@ -19,73 +19,60 @@ import FormField from "@/Components/FormField.vue";
 import FormControl from "@/Components/FormControl.vue";
 import BaseButtons from "@/Components/BaseButtons.vue";
 import SectionTitleLineWithButton from "@/Components/SectionTitleLineWithButton.vue";
-
-// const selectOptions = [
-//     { id: 1, label: "Business development" },
-//     { id: 2, label: "Marketing" },
-//     { id: 3, label: "Sales" },
-// ];
+import FormCheckRadioGroup from "@/Components/FormCheckRadioGroup.vue";
 
 const data = defineProps({ roles: Object, cabor: Object });
 
-const namaLengkap = ref(null);
-
 const form = useForm({
-    username: "vella_dar",
-    email: "vela.dar@gmail.com",
-    name: "Vella Darpa",
-    password: "12345678",
-    password_confirmation: "12345678",
-    mobile: "085327889876",
-    dateOfBirth: "10/05/1993",
+    name: "",
+    username: "",
+    email: "",
+    password: "",
+    password_confirmation: "",
+    mobile: "",
+    dateOfBirth: null,
     gender: "",
     avatar: null,
     roles: "",
     cabor: "",
 });
 
-const onRoleChange = (role) => {
-    if (form.roles && form.roles.label !== 'Organisasi/Cabor') {
-        form.cabor = "";
-    }
-};
-
 function submit() {
-    form.post(route("user.store"), {
-        preserveScroll: true,
-        onSuccess: () => form.reset(),
-        onError: () => {
-            if (form.errors.name) {
-                form.reset("name");
-                namaLengkap.value.focus();
-            }
-            if (form.errors.username) {
-                form.reset("username");
-            }
-        },
-    });
+    // form.post(`/users/update/${user.id}`, {
+    //     preserveScroll: true,
+    //     onSuccess: () => form.reset(),
+    // });
+    const role = [];
+    form.transform((data) => ({
+        ...data,
+        roles: [data.roles] ?? "",
+    })).post(route("user.store"));
 }
+
+const showF = ref(false);
 </script>
 
 <template>
     <LayoutAuthenticated>
-        <Head title="Create User" />
+        <Head title="Create New User" />
+
         <SectionMain>
             <SectionTitleLineWithButton
                 :icon="mdiAccountMultiplePlusOutline"
-                title="User Baru"
+                title="Create New User"
+                main
             >
                 <BaseButton
                     route-name="user.index"
                     :icon="mdiArrowLeftCircle"
-                    label="Back to Dashboard"
-                    color="light"
+                    label="Back to Data"
+                    color="bg-gray-300 border border-gray-400/30 dark:bg-slate-800 dark:border-slate-900/30"
                     rounded-full
                     small
                 />
             </SectionTitleLineWithButton>
 
-            <CardBox form @submit.prevent="submit" is-form>
+            <CardBox @submit.prevent="submit" is-form>
                 <FormField label="Nama Lengkap">
                     <FormControl
                         v-model="form.name"
@@ -144,7 +131,7 @@ function submit() {
                         <FormDatePicker
                             v-model="form.dateOfBirth"
                             :enableTimePicker="false"
-                            :error="form.errors.date_of_birth"
+                            :error="form.errors.dateOfBirth"
                         />
                     </FormField>
                 </div>
@@ -152,8 +139,8 @@ function submit() {
                     <FormControl
                         v-model="form.gender"
                         :options="[
-                            { id: 'Laki-Laki', label: 'Laki-Laki' },
-                            { id: 'Perempuan', label: 'Perempuan' },
+                            { id: 'LK', label: 'Laki-Laki' },
+                            { id: 'PR', label: 'Perempuan' },
                         ]"
                         name="Jenis Kelamin"
                         :error="form.errors.gender"
@@ -172,16 +159,16 @@ function submit() {
                 </FormField>
 
                 <BaseDivider />
-                <FormField label="Hak Akses">
+                <FormField label="Instansi">
                     <FormControl
                         v-model="form.roles"
                         :options="data.roles"
                         name="hak akses"
                         :error="form.errors.roles"
-                        @change="onRoleChange"
                     />
                 </FormField>
-                <div v-if="form.roles && form.roles.label == 'Organisasi/Cabor'">
+
+                <div v-if="form.roles == 3">
                     <FormField label="Organisasi/Cabor">
                         <FormControl
                             v-model="form.cabor"

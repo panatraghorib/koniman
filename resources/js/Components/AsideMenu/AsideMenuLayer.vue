@@ -33,18 +33,20 @@ const asideLgCloseClick = (event) => {
 <template>
     <aside
         id="aside"
-        class="lg:py-2 lg:pl-0 w-60 fixed flex z-40 top-0 h-screen transition-position overflow-hidden"
+        class="lg:py-1 lg:pl-0 w-60 fixed flex z-40 top-0 h-screen transition-position overflow-hidden"
     >
         <div
-            class="aside lg:rounded-lg border border-gray-300 dark:rounded-l-none dark:border-l-0 dark:border-gray-50/20 flex-1 flex flex-col overflow-hidden bg-slate-50 dark:bg-slate-900"
+            class="aside lg:rounded-lg border border-l-0 border-gray-200 dark:rounded-l-none dark:border-l-0 dark:border-gray-50/20 flex-1 flex flex-col overflow-hidden bg-white dark:bg-slate-900"
         >
             <div
-                class="aside-brand flex flex-row h-14 items-center justify-between dark:bg-slate-900"
+                class="aside-brand shadow-inner flex flex-row mb-5 h-14 items-center justify-between bg-gray-200 dark:bg-slate-800"
             >
                 <div
                     class="text-center flex-1 lg:text-left lg:pl-6 xl:text-center xl:pl-0"
                 >
-                    <b class="font-black">Kon</b>
+                    <b class="font-black text-blue-600 dark:text-purple-600">
+                        {{ $page.props.nameInstansi }}
+                    </b>
                 </div>
                 <button
                     class="hidden lg:inline-block xl:hidden p-3"
@@ -59,9 +61,9 @@ const asideLgCloseClick = (event) => {
                 <AsideMenuList :menu="menu" @menu-click="menuClick" />
             </div>
 
-            <ul>
+            <!-- <ul>
                 <AsideMenuItem :item="logoutItem" @menu-click="menuClick" />
-            </ul>
+            </ul> -->
         </div>
     </aside>
 </template>
