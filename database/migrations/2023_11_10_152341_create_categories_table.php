@@ -11,16 +11,27 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create(config('apptra.database.prefix') . 'cabor', function (Blueprint $table) {
+        Schema::create(config('apptra.database.prefix') . 'categories', function (Blueprint $table) {
             $table->id();
-            $table->string('cabor_name');
-            $table->string('initial')->nullable();
-            $table->string('logo')->nullable()->default('img/default-avatar.jpg');
-            $table->date('date_founded')->nullable();
+
+            $table->string('name');
+            $table->string('slug')->nullable();
             $table->text('description')->nullable();
+
+            $table->string('group_name')->nullable();
+            $table->string('image')->nullable();
+
+            $table->string('meta_title')->nullable();
+            $table->text('meta_description')->nullable();
+            $table->text('meta_keyword')->nullable();
+
+            $table->string('order')->nullable();
+            $table->string('status')->default('Active');
+
             $table->integer('created_by')->unsigned()->nullable();
             $table->integer('updated_by')->unsigned()->nullable();
             $table->integer('deleted_by')->unsigned()->nullable();
+
             $table->timestamps();
             $table->softDeletes();
         });
@@ -31,6 +42,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists(config('apptra.database.prefix') . 'cabor');
+        Schema::dropIfExists(config('apptra.database.prefix') . 'categories');
     }
 };

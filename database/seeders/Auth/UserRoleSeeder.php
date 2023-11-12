@@ -17,7 +17,7 @@ class UserRoleSeeder extends Seeder
         Schema::disableForeignKeyConstraints();
 
         User::findOrFail(1)->assignRole('Superadmin');
-        User::findOrFail(2)->assignRole('Eksekutif');
+        User::findOrFail(2)->assignRole('Koni');
         User::findOrFail(3)->assignRole('Organisasi/Cabor');
         User::findOrFail(4)->assignRole('Eksternal');
 

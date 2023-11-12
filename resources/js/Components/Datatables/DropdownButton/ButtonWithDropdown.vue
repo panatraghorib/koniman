@@ -67,7 +67,7 @@ defineExpose({ hide });
                 type="button"
                 :dusk="dusk"
                 :disabled="disabled"
-                class="bg-slate-200 border rounded-md shadow-sm p-1 inline-flex justify-center text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mx-1 my-2"
+                class="bg-slate-200 dark:bg-slate-800 border dark:border-slate-700 rounded-md shadow-sm p-1 inline-flex justify-center text-sm font-medium text-gray-700 dark:text-gray-400 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mx-1 my-2"
                 :class="{
                     'border-green-300': active,
                     'border-gray-300': !active,

@@ -4,6 +4,7 @@ import {
     mdiGithub,
     mdiLock,
     mdiAlertCircle,
+    mdiDotsHorizontal,
     mdiSquareEditOutline,
     mdiTable,
     mdiViewList,
@@ -22,18 +23,82 @@ export default [
     {
         route: "user.index",
         icon: mdiAccountGroup,
-        label: "Users",
+        label: "Pengguna",
+        permission: "view_users",
     },
-    // {
-    //     to: "/tables",
-    //     label: "Tables",
-    //     icon: mdiTable,
-    // },
-    // {
-    //     route: "forms",
-    //     label: "Forms",
-    //     icon: mdiSquareEditOutline,
-    // },
+    {
+        label: "Blog",
+        icon: mdiViewList,
+        menu: [
+            {
+                label: "Artikel",
+            },
+            {
+                label: "Kategori",
+                route: "category.index",
+                icon: mdiDotsHorizontal,
+            },
+        ],
+    },
+    {
+        label: "Instansi Koni",
+        icon: mdiViewList,
+        menu: [
+            {
+                label: "Sambutan",
+            },
+            {
+                label: "Struktur Organisasi",
+            },
+        ],
+    },
+    {
+        route: "cabor.index",
+        label: "Cabor/Organisasi",
+        icon: mdiTable,
+    },
+    {
+        to: "/ui",
+        label: "Atlit",
+        icon: mdiTelevisionGuide,
+    },
+    {
+        to: "/ui",
+        label: "Prestasi",
+        icon: mdiTelevisionGuide,
+    },
+    {
+        label: "Program Kerja",
+        icon: mdiViewList,
+        menu: [
+            {
+                label: "Program",
+            },
+            {
+                label: "Kegiatan",
+            },
+        ],
+    },
+    {
+        to: "/ui",
+        label: "Laporan SPJ",
+        icon: mdiTelevisionGuide,
+    },
+    {
+        to: "/forms",
+        label: "Pengaturan",
+        icon: mdiSquareEditOutline,
+    },
+    {
+        to: "/forms",
+        label: "Laporan",
+        icon: mdiSquareEditOutline,
+    },
+    {
+        to: "/responsive",
+        label: "Doc",
+        icon: mdiResponsive,
+    },
     // {
     //     to: "/ui",
     //     label: "UI",

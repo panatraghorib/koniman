@@ -10,6 +10,7 @@ use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -74,5 +75,10 @@ class User extends Authenticatable
                 : "",
             fn ($value) => (new \DateTime($value))->format('Y-m-d')
         );
+    }
+
+    public function cabor(): BelongsTo
+    {
+        return $this->belongsTo(Cabor::class, 'id');
     }
 }

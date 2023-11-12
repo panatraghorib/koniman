@@ -72,8 +72,8 @@ function submit() {
                 <BaseButton
                     route-name="user.index"
                     :icon="mdiArrowLeftCircle"
-                    label="Back to Dashboard"
-                    color="light"
+                    label="Back to Data"
+                    color="bg-gray-300 border border-gray-400/30 dark:bg-slate-800 dark:border-slate-900/30"
                     rounded-full
                     small
                 />

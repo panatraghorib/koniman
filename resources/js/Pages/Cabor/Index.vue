@@ -1,6 +1,6 @@
 <script setup>
-import { ref, computed, watch } from "vue";
-import { Head, Link, router, usePage } from "@inertiajs/vue3";
+import { ref, watch } from "vue";
+import { Head, router, usePage } from "@inertiajs/vue3";
 import Swal from "sweetalert2";
 import CardBox from "@/Components/CardBox.vue";
 import { useToast, TYPE } from "vue-toastification";
@@ -16,7 +16,7 @@ import {
     mdiPencilCircle,
     mdiDeleteCircle,
     mdiRefresh,
-    mdiCloseCircleOutline,
+    mdiEye,
 } from "@mdi/js";
 import SectionMain from "@/Components/SectionMain.vue";
 import BaseButton from "@/Components/BaseButton.vue";
@@ -29,17 +29,16 @@ import TableColumn from "@/Components/Datatables/TableColumn.vue";
 import DropdownAddSearch from "@/Components/Datatables/DropdownAddSearch.vue";
 import TableSearchRows from "@/Components/Datatables/TableSearchRows.vue";
 
-defineProps(["users"]);
+defineProps(["cabor"]);
 
-const formStatusWithHeader = ref(true);
 setTranslations({
     next: "Next",
     no_results_found: "No results found",
-    per_page: "/page",
+    per_page: "/hal",
     previous: "Prev",
-    results: "",
-    of: "",
-    to: "",
+    results: "data",
+    of: "-",
+    to: "dari",
 });
 
 const page = usePage();
@@ -78,25 +77,6 @@ watch(
             }
         }
 
-        // if (flash.message.type.default) {
-        //     toastId = toast({
-        //         component: ToastNotification,
-        //         props: { type: TYPE.DEFAULT, title: flash.message.text },
-        //     });
-        // }
-        // if (flash.message.type.success) {
-        //     toastId = toast({
-        //         component: ToastNotification,
-        //         props: { type: TYPE.SUCCESS, title: flash.message.text },
-        //     });
-        // }
-        // if (flash.message.type.error) {
-        //     toastId = toast({
-        //         component: ToastNotification,
-        //         props: { type: TYPE.ERROR, title: flash.message.text },
-        //     });
-        // }
-
         if (toastId !== null) {
             setTimeout(() => toast.dismiss(toastId), 5000);
         }
@@ -116,40 +96,49 @@ const confirmDelete = (id) => {
     });
     swalButtons
         .fire({
-            title: "Do you want to Delete user?",
+            title: "Do you want to Delete cabor?",
             showCancelButton: true,
             confirmButtonText: "Ya",
             cancelButtonText: `Batal`,
         })
         .then((result) => {
             if (result.isConfirmed) {
-                router.delete(`users/delete/${id}`, {
+                router.delete(`data-cabor/delete/${id}`, {
                     preserveScroll: true,
                     onSuccess: (page) => {
                         console.log(page);
-                        swalButtons.fire("Deleted!", "", "success");
+                        const message = page.props.flash.message;
+                        if (message && message.type == "error") {
+                            console.log(message);
+                            swalButtons.fire("Gagal!", "", "error");
+                        } else {
+                            swalButtons.fire("Deleted!", "", "success");
+                        }
                     },
                 });
             }
         });
 };
+
+const PageName = "Cabor/Organisasi";
+import DefaultAvatar from "/public/img/user-avatar.png";
 </script>
 
 <template>
     <LayoutAuthenticated>
-        <Head title="Users" />
+        <Head :title="PageName" />
 
         <SectionMain>
             <SectionTitleLineWithButton
                 :icon="mdiAccountGroup"
-                title="Pengguna"
+                :title="PageName"
                 main
             />
 
             <CardBox has-outline has-table>
                 <div class="flex flex-row p-2 justify-end border-b">
                     <BaseButton
-                        route-name="user.create"
+                        route-name="cabor.create"
                         color="bg-blue-700 border-transparent my-3 mx-3"
                         label="Tambah data"
                         class="text-white"
@@ -157,22 +146,8 @@ const confirmDelete = (id) => {
                         small
                     />
                 </div>
-
-                <!-- <template #table-wrapper>
-                    <div class="flex flex-col bg-red-300 pt-40">
-                        <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                            <div
-                                class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8"
-                            >
-                                <div
-                                    class="shadow border-b border-gray-200 relative"
-                                ></div>
-                            </div>
-                        </div>
-                    </div>
-                </template> -->
                 <Table
-                    :resource="users"
+                    :resource="cabor"
                     :striped="true"
                     :prevent-overlapping-requests="false"
                     :input-debounce-ms="1000"
@@ -238,24 +213,39 @@ const confirmDelete = (id) => {
                         </div>
                     </template>
 
-                    <template #cell(actions)="{ item: user }">
-                        <!-- TODO: <DropdownButton /> -->
+                    <template #cell(logo)="{ item: cabor }">
+                        <img
+                            :src="cabor.logo ?? DefaultAvatar"
+                            class="w-10 h-10 rounded-md"
+                            alt="Logo"
+                        />
+                    </template>
+
+                    <template #cell(actions)="{ item: cabor }">
+                        <!-- TODO: buat <DropdownButton /> -->
                         <div class="flex flex-row justify-end">
                             <BaseButtons>
                                 <BaseButton
-                                    :inertia-link="`/users/${user.id}/edit`"
-                                    color="bg-blue-700 dark:bg-purple-800 border-none"
+                                    :inertia-link="`/data-cabor/${cabor.id}/edit`"
+                                    color="bg-blue-700 dark:bg-blue-800 border-none"
                                     class="text-white"
                                     :icon="mdiPencilCircle"
                                     small
                                 />
                                 <BaseButton
                                     as="button"
-                                    color="bg-red-400 dark:bg-red-900 border-none"
+                                    color="bg-red-400 dark:bg-red-600 border-none"
                                     class="text-white"
                                     :icon="mdiDeleteCircle"
                                     small
-                                    @click="confirmDelete(user.id)"
+                                    @click="confirmDelete(cabor.id)"
+                                />
+                                <BaseButton
+                                    :inertia-link="`/data-cabor/${cabor.id}/show`"
+                                    color="bg-gray-600 dark:bg-gray-700 border-none"
+                                    class="text-white"
+                                    :icon="mdiEye"
+                                    small
                                 />
                             </BaseButtons>
                         </div>

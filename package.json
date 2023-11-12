@@ -22,6 +22,7 @@
     },
     "dependencies": {
         "@mdi/js": "^7.3.67",
+        "@popperjs/core": "^2.11.8",
         "@protonemedia/inertiajs-tables-laravel-query-builder": "^2.2.0",
         "@tailwindcss/line-clamp": "^0.4.4",
         "@tailwindcss/nesting": "^0.0.0-insiders.565cd3e",

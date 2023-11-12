@@ -4,8 +4,11 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CaborController;
 use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Blog\PostController;
+use App\Http\Controllers\Blog\CategoryController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -43,15 +46,44 @@ Route::middleware('auth')->group(function () {
         Route::put('update/{user}', [UserController::class, 'update'])->name('user.update');
         Route::delete('delete/{user}', [UserController::class, 'destroy'])->name('user.delete');
     });
+
+    #Cabor ROUTES
+    Route::group(['prefix' => 'data-cabor'], function () {
+        Route::get('/', [CaborController::class, 'index'])->name('cabor.index');
+        Route::get('create', [CaborController::class, 'create'])->name('cabor.create');
+        Route::post('store', [CaborController::class, 'store'])->name('cabor.store');
+        Route::get('{cabor}/edit', [CaborController::class, 'edit'])->name('cabor.edit');
+        Route::put('update/{cabor}', [CaborController::class, 'update'])->name('cabor.update');
+        Route::delete('delete/{cabor}', [CaborController::class, 'destroy'])->name('cabor.delete');
+    });
+
+    #Article Blog ROUTES
+    Route::group(['prefix' => 'blog'], function () {
+        #Category
+        Route::get('category/', [CategoryController::class, 'index'])->name('category.index');
+        Route::get('category/create', [CategoryController::class, 'create'])->name('category.create');
+        Route::post('category/store', [CategoryController::class, 'store'])->name('category.store');
+        Route::get('category/{category}/edit', [CategoryController::class, 'edit'])->name('category.edit');
+        Route::put('category/update/{category}', [CategoryController::class, 'update'])->name('category.update');
+        Route::delete('category/delete/{category}', [CategoryController::class, 'destroy'])->name('category.delete');
+
+        #Post
+        Route::get('post/', [PostController::class, 'index'])->name('post.index');
+        Route::get('post/create', [PostController::class, 'create'])->name('post.create');
+        Route::post('post/store', [PostController::class, 'store'])->name('post.store');
+        Route::get('post/{post}/edit', [PostController::class, 'edit'])->name('post.edit');
+        Route::put('post/update/{post}', [PostController::class, 'update'])->name('post.update');
+        Route::delete('post/delete/{post}', [PostController::class, 'destroy'])->name('post.delete');
+    });
 });
 
 
-// Images
 
 Route::get('/test-front', function () {
     return Inertia::render('Frontend/Index');
 });
 
+// Images
 Route::get('/img/{path}', [ImagesController::class, 'show'])
     ->where('path', '.*')
     ->name('image');

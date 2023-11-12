@@ -14,14 +14,14 @@ class AuthPermission extends Command
      *
      * @var string
      */
-    protected $signature = 'auth:permission';
+    protected $signature = 'auth:permission {name} {--R|remove}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Create Permissions';
 
     /**
      * Execute the console command.
@@ -42,7 +42,7 @@ class AuthPermission extends Command
             foreach ($permissions as $permission) {
                 Permission::firstOrCreate(['name' => $permission]);
             }
-            // $this->info('Permissions ' . implode(', ', $permissions) . ' created.');
+            $this->info('Permissions ' . implode(', ', $permissions) . ' created.');
         }
 
         // if ($role = Role::where('name', 'administrator')->first()) {

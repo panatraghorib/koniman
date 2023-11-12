@@ -2,14 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Cabor extends Model
+class Cabor extends BaseModel
 {
     use HasFactory, SoftDeletes;
+
+    protected $with = ['users'];
+
 
     protected $fillable = [
         'cabor_name',
@@ -29,6 +33,19 @@ class Cabor extends Model
 
     public function users(): HasMany
     {
-        return $this->hasMany(User::class, 'cabor_id');
+        return $this->hasMany(User::class, 'organization_id');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::deleting(function ($cabor) {
+            $relationMethods = ['users'];
+            foreach ($relationMethods as $relationMethod) {
+                if ($cabor->{$relationMethod}->count() > 0) {
+                    return false;
+                }
+            }
+        });
     }
 }
