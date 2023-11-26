@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 // import { RouterLink } from 'vue-router'
-import { Link } from "@inertiajs/vue3";
+import { Link, usePage } from "@inertiajs/vue3";
 import { mdiMinus, mdiPlus } from "@mdi/js";
 import { getButtonColor } from "@/colors.js";
 import BaseIcon from "@/Components/BaseIcon.vue";
@@ -60,10 +60,19 @@ const menuClick = (event) => {
         isDropdownActive.value = !isDropdownActive.value;
     }
 };
-</script>
 
+const page = usePage();
+const userRoles = page.props.user.roles;
+const userPermission = page.props.user.permissions;
+</script>
+<!-- userRoles.includes('Superadmin') -->
+<!-- userPermission.includes(item.permission) -->
 <template>
-    <li :class="activeInactiveLiStyle" class="ml-1">
+    <li
+        :class="activeInactiveLiStyle"
+        class="ml-1"
+        v-if="$auth.can(item.permission)"
+    >
         <component
             :is="item.route ? Link : 'a'"
             :href="itemHref"
@@ -75,7 +84,7 @@ const menuClick = (event) => {
             <BaseIcon
                 v-if="item.icon"
                 :path="item.icon"
-                class="flex-none"
+                class="flex-none -mr-3"
                 :class="activeInactiveStyle"
                 w="w-16"
                 :size="18"
@@ -83,7 +92,7 @@ const menuClick = (event) => {
             <span
                 class="grow text-ellipsis line-clamp-1"
                 :class="[
-                    { 'pr-12': !hasDropdown },
+                    { 'pr-1': !hasDropdown },
                     activeInactiveStyle,
                     asideMenuItemActiveStyle,
                 ]"

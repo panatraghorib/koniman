@@ -3,6 +3,8 @@ import { mdiUpload } from "@mdi/js";
 import { computed, ref, watch } from "vue";
 import BaseButton from "@/Components/BaseButton.vue";
 import DefaultAvatar from "/public/img/user-avatar.png";
+import DefaultImage from "/public/img/default-image.png";
+import DefaultLogo from "/public/img/default-logo.png";
 
 const props = defineProps({
     modelValue: {
@@ -25,9 +27,14 @@ const props = defineProps({
         type: String,
         default: "info",
     },
+    imageType: {
+        type: String,
+        default: "image",
+    },
     isRoundIcon: Boolean,
     small: Boolean,
     preview: Boolean,
+    error: String,
 });
 
 const emit = defineEmits(["update:modelValue"]);
@@ -48,12 +55,21 @@ watch(modelValueProp, (value) => {
     }
 });
 
-const showFilePreview = computed(() => props.preview && !file.value);
-
 const filePreview = ref(null);
-// const image = reactive({
-//     preview: null,
-// });
+
+const uploadImageType = computed(() => {
+    var imageBase = DefaultImage;
+
+    if (props.imageType == "logo") {
+        imageBase = DefaultLogo;
+    }
+
+    if (props.imageType == "avatar") {
+        imageBase = DefaultAvatar;
+    }
+
+    return imageBase;
+});
 
 const upload = (event) => {
     const value = event.target.files || event.dataTransfer.files;
@@ -94,6 +110,11 @@ const upload = (event) => {
     //   })
 };
 
+// if (typeof props.modelValue == "string") {
+//     console.log(typeof props.modelValue == "string");
+//     emit("update:modelValue", null);
+// }
+
 // const uploadPercent = ref(0)
 //
 // const progressEvent = progressEvent => {
@@ -117,12 +138,13 @@ const upload = (event) => {
                             ? modelValue
                             : filePreview
                             ? filePreview
-                            : DefaultAvatar,
+                            : uploadImageType,
                     ]"
                     class="w-full h-full rounded-md"
                     alt="File Preview"
                 />
             </div>
+
             <label class="inline-flex">
                 <BaseButton
                     as="a"
@@ -155,5 +177,8 @@ const upload = (event) => {
                 {{ file.name }}
             </span>
         </div>
+    </div>
+    <div v-if="error" class="form-error">
+        <span class="text-xs italic text-red-500"> {{ error }}</span>
     </div>
 </template>

@@ -18,6 +18,9 @@ export default defineConfig({
             },
         }),
     ],
+    optimizeDeps: {
+        include: ["ckeditor5-custom-build"],
+    },
     resolve: {
         extensions: [".js", ".json", ".jsx", ".mjs", ".ts", ".tsx", ".vue"],
     },

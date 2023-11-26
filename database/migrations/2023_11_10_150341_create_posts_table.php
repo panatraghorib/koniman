@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('type')->nullable();
             $table->integer('category_id')->unsigned()->nullable();
 
-            $table->integer('is_featured')->nullable(); // for hero
+            $table->integer('is_featured')->default(0); // for hero
             $table->string('featured_image')->nullable();
 
             // SEO
@@ -31,9 +31,11 @@ return new class extends Migration
             $table->string('meta_og_url')->nullable();
             // SEO
 
+
             $table->integer('hits')->default(0)->unsigned();
             $table->integer('order')->nullable();
-            $table->tinyInteger('status')->default(1);
+            $table->tinyInteger('status')->default(1); //Publish, Unpublish, Draft
+            $table->tinyInteger('approval')->default(0)->unsigned();// Approve, Reject to show on public
 
             $table->integer('moderated_by')->unsigned()->nullable();
             $table->datetime('moderated_at')->nullable();

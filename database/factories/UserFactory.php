@@ -28,9 +28,9 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'organization_id' => 1,
             'mobile' => fake()->phoneNumber(),
-            'gender' => $this->faker->randomElement(['Laki-Laki', 'Perempuan']),
+            'gender' => $this->faker->randomElement(['LK', 'PR']),
             'created_at' => now(),
-            'date_of_birth' => fake()->date(),
+            'date_of_birth' => $this->faker->date(),
             'avatar' => 'img/default-avatar.jpg'
         ];
     }

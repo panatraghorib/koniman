@@ -46,6 +46,9 @@ const transactionBarItems = computed(() => mainStore.history);
     <LayoutAuthenticated>
         <Head title="Dashboard" />
         <SectionMain>
+            {{ $auth.can("view_user") }}
+            {{ $auth.is("Superadmin") }}
+
             <SectionTitleLineWithButton
                 :icon="mdiChartTimelineVariant"
                 title="Overview"

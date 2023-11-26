@@ -1,45 +1,52 @@
 import "../css/main.css";
 import "aos/dist/aos.css";
 
-import { createPinia } from "pinia";
-import { useDarkModeStore } from "@/Stores/darkMode.js";
-import { darkModeKey } from "@/config.js";
+// MODULES
 import { createApp, h } from "vue";
-import { createInertiaApp } from "@inertiajs/vue3";
+import { createInertiaApp, usePage } from "@inertiajs/vue3";
+import { createPinia } from "pinia";
+import { darkModeKey } from "@/config.js";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { ZiggyVue } from "../../vendor/tightenco/ziggy/dist/vue.m";
+import { useDarkModeStore } from "@/Stores/darkMode.js";
+
+import { authPermission } from "@/Helpers/auth.js";
+// COMPONENTS
 import BaseDivider from "@/Components/BaseDivider.vue";
 import FormDatePicker from "@/Components/FormDatePicker.vue";
 
+// STYLES
 import "vue-toastification/dist/index.css";
 import "sweetalert2/dist/sweetalert2.min.css";
-
 import Toast, { TYPE } from "vue-toastification";
 
-import { createI18n } from "vue-i18n";
-import generalLangBg from "@/Lang/bg/general_lang_bg";
-import generalLangDe from "@/Lang/de/general_lang_de";
-import generalLangEn from "@/Lang/en/general_lang_en";
-import generalLangFr from "@/Lang/fr/general_lang_fr";
-import generalLangRu from "@/Lang/ru/general_lang_ru";
-import generalLangTr from "@/Lang/tr/general_lang_tr";
-import generalLangZh from "@/Lang/zh/general_lang_zh";
+const permissions = authPermission();
 
-const i18n = createI18n({
-    legacy: false,
-    locale: "en",
-    fallbackLocale: "en",
-    fallbackRoot: "en",
-    messages: {
-        bg: generalLangBg,
-        de: generalLangDe,
-        en: generalLangEn,
-        fr: generalLangFr,
-        ru: generalLangRu,
-        tr: generalLangTr,
-        zh: generalLangZh,
-    },
-});
+// LANG
+// import { createI18n } from "vue-i18n";
+// import generalLangBg from "@/Lang/bg/general_lang_bg";
+// import generalLangDe from "@/Lang/de/general_lang_de";
+// import generalLangEn from "@/Lang/en/general_lang_en";
+// import generalLangFr from "@/Lang/fr/general_lang_fr";
+// import generalLangRu from "@/Lang/ru/general_lang_ru";
+// import generalLangTr from "@/Lang/tr/general_lang_tr";
+// import generalLangZh from "@/Lang/zh/general_lang_zh";
+
+// const i18n = createI18n({
+//     legacy: false,
+//     locale: "en",
+//     fallbackLocale: "en",
+//     fallbackRoot: "en",
+//     messages: {
+//         bg: generalLangBg,
+//         de: generalLangDe,
+//         en: generalLangEn,
+//         fr: generalLangFr,
+//         ru: generalLangRu,
+//         tr: generalLangTr,
+//         zh: generalLangZh,
+//     },
+// });
 
 const appName =
     window.document.getElementsByTagName("title")[0]?.innerText || "Laravel";
@@ -90,15 +97,30 @@ createInertiaApp({
             import.meta.glob("./Pages/**/*.vue")
         ),
     setup({ el, App, props, plugin }) {
-        return createApp({ render: () => h(App, props) })
-            .use(i18n)
-            .use(plugin)
-            .use(pinia)
-            .use(Toast, toastOptions)
-            .component("DatePicker", FormDatePicker)
-            .component("BaseDivider", BaseDivider)
-            .use(ZiggyVue, Ziggy)
-            .mount(el);
+        const app = createApp({ render: () => h(App, props) });
+
+        app.use(plugin);
+        app.use(pinia);
+        app.use(Toast, toastOptions);
+        app.use(ZiggyVue, Ziggy);
+        app.component("DatePicker", FormDatePicker);
+        app.component("BaseDivider", BaseDivider);
+        // app.provide("permissions", permissions);
+        app.config.globalProperties.$auth = permissions;
+        app.mount(el);
+
+        return app;
+        // return (
+        //     createApp({ render: () => h(App, props) })
+        //         // app.use(i18n)
+        //         .use(plugin)
+        //         .use(pinia)
+        //         .use(Toast, toastOptions)
+        //         .use(ZiggyVue, Ziggy)
+        //         .component("DatePicker", FormDatePicker)
+        //         .component("BaseDivider", BaseDivider)
+        //         .mount(el)
+        // );
     },
     progress: {
         // color: "#4B5563",

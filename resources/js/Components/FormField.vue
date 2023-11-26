@@ -1,7 +1,7 @@
 <script setup>
 import { computed, useSlots } from "vue";
 
-defineProps({
+const props = defineProps({
     label: {
         type: String,
         default: null,
@@ -13,6 +13,10 @@ defineProps({
     help: {
         type: String,
         default: null,
+    },
+    required: {
+        type: Boolean,
+        default: false,
     },
 });
 
@@ -32,6 +36,13 @@ const wrapperClass = computed(() => {
 
     return base;
 });
+
+const displayLabel = computed(() => {
+    if (props.required) {
+        return props.label + " *";
+    }
+    return props.label;
+});
 </script>
 
 <template>
@@ -40,12 +51,15 @@ const wrapperClass = computed(() => {
             v-if="label"
             :for="labelFor"
             class="block font-medium text-sm mb-2"
-            >{{ label }}</label
+            >{{ displayLabel }}</label
         >
         <div :class="wrapperClass">
             <slot />
         </div>
-        <div v-if="help" class="text-xs text-gray-500 dark:text-slate-400 mt-1">
+        <div
+            v-if="help"
+            class="text-xs text-yellow-600 dark:text-slate-400 mt-1 italic"
+        >
             {{ help }}
         </div>
     </div>

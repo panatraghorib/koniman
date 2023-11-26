@@ -1,7 +1,6 @@
 <script setup>
 import { watch, reactive } from "vue";
 import { Head, router, usePage, useForm, Link } from "@inertiajs/vue3";
-import Swal from "sweetalert2";
 import { useToast, TYPE } from "vue-toastification";
 
 import {
@@ -102,44 +101,8 @@ watch(
     { deep: true }
 );
 
-const confirmDelete = (id) => {
-    const swalButtons = Swal.mixin({
-        customClass: {
-            confirmButton:
-                "text-gray-900 w-28 bg-red-400 border border-gray-300 focus:outline-none hover:bg-red-700 hover:text-white focus:ring-1 focus:ring-gray-200 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700",
-            cancelButton:
-                "text-gray-900 w-28 bg-gray-300 border border-gray-300 focus:outline-none hover:bg-gray-400 hover:text-white focus:ring-1 focus:ring-gray-200 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700",
-        },
-        buttonsStyling: false,
-    });
-    swalButtons
-        .fire({
-            title: "Do you want to Delete cabor?",
-            showCancelButton: true,
-            confirmButtonText: "Ya",
-            cancelButtonText: `Batal`,
-        })
-        .then((result) => {
-            if (result.isConfirmed) {
-                router.delete(`data-cabor/delete/${id}`, {
-                    preserveScroll: true,
-                    onSuccess: (page) => {
-                        console.log(page);
-                        const message = page.props.flash.message;
-                        if (message && message.type == "error") {
-                            console.log(message);
-                            swalButtons.fire("Gagal!", "", "error");
-                        } else {
-                            swalButtons.fire("Deleted!", "", "success");
-                        }
-                    },
-                });
-            }
-        });
-};
-
 const PageName = "Kategori Artikel";
-import DefaultAvatar from "/public/img/user-avatar.png";
+import DefaultImage from "/public/img/default-image.png";
 </script>
 
 <template>
@@ -153,12 +116,10 @@ import DefaultAvatar from "/public/img/user-avatar.png";
                 main
             />
 
-            {{ $page.props.filters }}
-            {{ form }}
             <CardBox has-outline has-table>
                 <div class="flex flex-row p-2 justify-end border-b">
                     <BaseButton
-                        route-name="cabor.create"
+                        route-name="category.create"
                         color="bg-blue-700 border-transparent my-3 mx-3"
                         label="Tambah data"
                         class="text-white"
@@ -187,7 +148,9 @@ import DefaultAvatar from "/public/img/user-avatar.png";
 
                 <table class="w-full whitespace-nowrap">
                     <thead>
-                        <tr class="text-left font-medium text-gray-800 text-md">
+                        <tr
+                            class="bg-slate-300 dark:bg-slate-700 text-left font-medium text-gray-800 dark:text-slate-300 text-md"
+                        >
                             <th class="pb-4 pt-6 px-6">Kategori</th>
                             <th class="pb-4 pt-6 px-6">Grup</th>
                             <th class="pb-4 pt-6 px-6">Image</th>
@@ -203,7 +166,7 @@ import DefaultAvatar from "/public/img/user-avatar.png";
                             <td class="border-t">
                                 <Link
                                     class="flex items-center px-6 focus:text-indigo-500"
-                                    :href="`/category/${category.id}/edit`"
+                                    :href="`category/${category.id}/edit`"
                                 >
                                     {{ category.name }}
                                     <icon
@@ -216,7 +179,7 @@ import DefaultAvatar from "/public/img/user-avatar.png";
                             <td class="border-t">
                                 <Link
                                     class="flex items-center px-6"
-                                    :href="`/category/${category.id}/edit`"
+                                    :href="`category/${category.id}/edit`"
                                     tabindex="-1"
                                 >
                                     {{ category.group_name }}
@@ -225,16 +188,20 @@ import DefaultAvatar from "/public/img/user-avatar.png";
                             <td class="border-t">
                                 <Link
                                     class="flex items-center px-6"
-                                    :href="`/category/${category.id}/edit`"
+                                    :href="`category/${category.id}/edit`"
                                     tabindex="-1"
                                 >
-                                    {{ category.image }}
+                                    <img
+                                        :src="category.image ?? DefaultImage"
+                                        class="w-10 h-10 rounded-md"
+                                        alt="Image"
+                                    />
                                 </Link>
                             </td>
                             <td class="w-px border-t">
                                 <Link
                                     class="flex items-center px-4"
-                                    :href="`/category/${category.id}/edit`"
+                                    :href="`category/${category.id}/edit`"
                                     tabindex="-1"
                                 >
                                     <icon

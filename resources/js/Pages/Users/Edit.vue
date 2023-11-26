@@ -68,6 +68,7 @@ function submit() {
             <SectionTitleLineWithButton
                 :icon="mdiAccountMultiplePlusOutline"
                 title="Edit Pengguna"
+                main
             >
                 <BaseButton
                     route-name="user.index"
@@ -215,12 +216,20 @@ function submit() {
                             color="text-white bg-emerald-600 border-emerald-700 shadow-md dark:bg-purple-600 dark:border-purple-700"
                             label="Submit"
                             small
+                            :disabled="form.processing"
                         />
                         <BaseButton
                             type="reset"
                             color="danger"
                             outline
                             label="Reset"
+                            small
+                        />
+                        <BaseButton
+                            route-name="user.index"
+                            color="info"
+                            outline
+                            label="Batal"
                             small
                         />
                     </BaseButtons>

@@ -96,6 +96,13 @@ function submit() {
                             label="Reset"
                             small
                         />
+                        <BaseButton
+                            route-name="cabor.index"
+                            color="info"
+                            outline
+                            label="Batal"
+                            small
+                        />
                     </BaseButtons>
                 </template>
             </CardBox>

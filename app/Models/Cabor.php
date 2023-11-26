@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Model;
+// use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -33,7 +33,7 @@ class Cabor extends BaseModel
 
     public function users(): HasMany
     {
-        return $this->hasMany(User::class, 'organization_id');
+        return $this->hasMany(User::class, 'organization_id', 'id');
     }
 
     protected static function boot()

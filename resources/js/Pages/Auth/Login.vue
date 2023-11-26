@@ -104,6 +104,13 @@ const submit = () => {
                             outline
                             label="Remind"
                         />
+                        <BaseButton
+                            v-if="canResetPassword"
+                            href="/"
+                            color="info"
+                            outline
+                            label="Public View"
+                        />
                     </BaseButtons>
                 </BaseLevel>
             </CardBox>

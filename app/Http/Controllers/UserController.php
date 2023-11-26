@@ -56,7 +56,7 @@ class UserController extends Controller
                     ->defaultSort('id')
                     ->column(key: 'name', searchable: true, sortable: true, canBeHidden: false, label: 'Nama')
                     ->column(key: 'email', searchable: true, sortable: true)
-                    ->column(key: 'email_verified_at', label: 'Bergabung')
+                    ->column(key: 'mobile', label: 'Kontak')
                     ->column(label: 'Actions');
             }
         );

@@ -2,12 +2,12 @@
 
 namespace App\Models\Blog;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Category extends Model
+class Category extends BaseModel
 {
     use HasFactory;
     use SoftDeletes;
@@ -25,6 +25,10 @@ class Category extends Model
         "meta_keyword",
         "order",
         "status",
+    ];
+
+    protected $casts = [
+        'status' => 'boolean',
     ];
 
     public function __construct($attributes = [])

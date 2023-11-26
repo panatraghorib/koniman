@@ -8,10 +8,11 @@ use App\Http\Controllers\CaborController;
 use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Blog\PostController;
+use App\Http\Controllers\ImageUploadController;
 use App\Http\Controllers\Blog\CategoryController;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
+    return Inertia::render('Frontend/Home', [
         'canLogin' => Route::has('login'),
         // 'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
@@ -68,13 +69,19 @@ Route::middleware('auth')->group(function () {
         Route::delete('category/delete/{category}', [CategoryController::class, 'destroy'])->name('category.delete');
 
         #Post
-        Route::get('post/', [PostController::class, 'index'])->name('post.index');
+        Route::get('posts/', [PostController::class, 'index'])->name('post.index');
         Route::get('post/create', [PostController::class, 'create'])->name('post.create');
         Route::post('post/store', [PostController::class, 'store'])->name('post.store');
+        Route::get('post/{post}/show', [PostController::class, 'show'])->name('post.show');
         Route::get('post/{post}/edit', [PostController::class, 'edit'])->name('post.edit');
         Route::put('post/update/{post}', [PostController::class, 'update'])->name('post.update');
+        Route::put('post/approve/{post}', [PostController::class, 'approve'])->name('post.approve');
         Route::delete('post/delete/{post}', [PostController::class, 'destroy'])->name('post.delete');
     });
+
+
+    Route::post('upload-image', [ImageUploadController::class, 'upload'])->name('image.upload');
+    Route::post('delete-image', [ImageUploadController::class, 'delete'])->name('image.delete');
 });
 
 
@@ -82,6 +89,7 @@ Route::middleware('auth')->group(function () {
 Route::get('/test-front', function () {
     return Inertia::render('Frontend/Index');
 });
+
 
 // Images
 Route::get('/img/{path}', [ImagesController::class, 'show'])

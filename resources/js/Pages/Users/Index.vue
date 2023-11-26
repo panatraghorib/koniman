@@ -147,7 +147,10 @@ const confirmDelete = (id) => {
             />
 
             <CardBox has-outline has-table>
-                <div class="flex flex-row p-2 justify-end border-b">
+                <div
+                    class="flex flex-row p-2 justify-end border-b"
+                    v-if="$auth.can('add_user')"
+                >
                     <BaseButton
                         route-name="user.create"
                         color="bg-blue-700 border-transparent my-3 mx-3"
@@ -248,6 +251,7 @@ const confirmDelete = (id) => {
                                     class="text-white"
                                     :icon="mdiPencilCircle"
                                     small
+                                    v-if="$auth.can('edit_user')"
                                 />
                                 <BaseButton
                                     as="button"
@@ -256,6 +260,7 @@ const confirmDelete = (id) => {
                                     :icon="mdiDeleteCircle"
                                     small
                                     @click="confirmDelete(user.id)"
+                                    v-if="$auth.can('delete_user')"
                                 />
                             </BaseButtons>
                         </div>

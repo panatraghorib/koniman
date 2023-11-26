@@ -122,7 +122,7 @@ function submit() {
                         />
                         <BaseButton
                             route-name="cabor.index"
-                            color="default"
+                            color="info"
                             outline
                             label="Batal"
                             small

@@ -25,7 +25,7 @@ class CategorySeeder extends Seeder
         // DB::table('categories')->truncate();
         // echo "Truncate: categories \n";
 
-        Category::factory()->count(20)->create();
+        Category::factory()->count(5)->create();
         echo " Insert: categories \n\n";
 
         // Enable foreign key checks!

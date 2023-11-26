@@ -82,7 +82,7 @@ class CaborController extends Controller
         $cabor = Cabor::create([
             'cabor_name' => $request->cabor_name,
             'initial' => $request->initial,
-            'logo' => $request->file('logo') ? $request->file('logo')->store('logo') : null,
+            'logo' => $request->file('logo') ? $request->file('logo')->store('cabor') : null,
             'created_by' => auth()->user()->id,
         ]);
 
@@ -146,7 +146,7 @@ class CaborController extends Controller
         ]);
 
         if (request()->file('logo')) {
-            $cabor->update(['logo' => $request->file('logo')->store('logo')]);
+            $cabor->update(['logo' => $request->file('logo')->store('cabor')]);
         }
 
         activity('Cabor')

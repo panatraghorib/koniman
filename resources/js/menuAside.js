@@ -1,16 +1,11 @@
 import {
-    mdiAccountCircle,
     mdiMonitor,
-    mdiGithub,
-    mdiLock,
-    mdiAlertCircle,
     mdiDotsHorizontal,
     mdiSquareEditOutline,
     mdiTable,
     mdiViewList,
     mdiTelevisionGuide,
     mdiResponsive,
-    mdiPalette,
     mdiAccountGroup,
 } from "@mdi/js";
 
@@ -24,7 +19,7 @@ export default [
         route: "user.index",
         icon: mdiAccountGroup,
         label: "Pengguna",
-        permission: "view_users",
+        permission: "view_user",
     },
     {
         label: "Blog",
@@ -32,6 +27,8 @@ export default [
         menu: [
             {
                 label: "Artikel",
+                route: "post.index",
+                icon: mdiDotsHorizontal,
             },
             {
                 label: "Kategori",
@@ -56,6 +53,7 @@ export default [
         route: "cabor.index",
         label: "Cabor/Organisasi",
         icon: mdiTable,
+        permission: "view_cabor",
     },
     {
         to: "/ui",
