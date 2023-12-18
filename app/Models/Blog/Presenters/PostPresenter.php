@@ -19,7 +19,7 @@ trait PostPresenter
         );
     }
 
-    protected function publishedAt(): Attribute
+    protected function publishedAtFormated(): Attribute
     {
         return Attribute::make(
             get: fn ($value) => Carbon::now()->diffInHours($value) < 24
@@ -50,31 +50,7 @@ trait PostPresenter
     protected function status(): Attribute
     {
         return Attribute::make(
-            // get: function ($value, array $attributes) {
-            //     $status = "";
-            //     switch ($value) {
-            //         case 0:
-            //             $status = '<span class="py-1 px-2 rounded-full text-white text-xs bg-red-800 italic">Unpublished</span>';
-            //             break;
 
-            //         case 1:
-            //             if ($attributes['published_at'] >= Carbon::now()) {
-            //                 $status = '<span class="py-1 px-2 rounded-full bg-yellow-500 text-gray-600">Scheduled (' . $attributes['published_at'] . ')</span>';
-            //             }
-
-            //             $status = '<span class="py-1 px-2 rounded-full text-white text-xs bg-secondary italic">Published</span>';
-            //             break;
-
-            //         case 2:
-            //             $status = '<span class="py-1 px-2 rounded-full bg-yellow-500 text-white text-xs italic">Draft</span>';
-            //             break;
-
-            //         default:
-            //             $status = '<span class="py-1 px-2 rounded-full bg-red-500">Status:' . $value . '</span>';
-            //             break;
-            //     }
-            //     return $status;
-            // },
             set: function ($value, array $attributes) {
 
                 if ($value == 1 && empty($attributes['published_at'])) {
@@ -94,25 +70,25 @@ trait PostPresenter
         return Attribute::make(
             get: function ($value, array $attributes) {
                 $status = "";
-                switch ($attributes['status']) {
+                switch ($this->status) {
                     case 0:
-                        $status = '<span class="py-1 px-2 rounded-full text-white text-xs bg-red-800 italic">Unpublished</span>';
+                        $status = '<span class="py-1 px-2 rounded-md text-white text-xs bg-red-800 italic">Unpublished</span>';
                         break;
 
                     case 1:
                         if ($attributes['published_at'] >= Carbon::now()) {
-                            $status = '<span class="py-1 px-2 rounded-full bg-yellow-500 text-gray-600">Scheduled (' . $attributes['published_at'] . ')</span>';
+                            $status = '<span class="py-1 px-2 rounded-md bg-yellow-500 text-gray-600">Scheduled (' . $attributes['published_at'] . ')</span>';
                         }
 
-                        $status = '<span class="py-1 px-2 rounded-full text-white text-xs bg-secondary italic">Published</span>';
+                        $status = '<span class="py-1 px-2 rounded-md text-white text-xs bg-secondary italic">Published</span>';
                         break;
 
                     case 2:
-                        $status = '<span class="py-1 px-2 rounded-full bg-yellow-500 text-white text-xs italic">Draft</span>';
+                        $status = '<span class="py-1 px-2 rounded-md bg-yellow-500 text-white text-xs italic">Draft</span>';
                         break;
 
                     default:
-                        $status = '<span class="py-1 px-2 rounded-full bg-red-500">Status:' . $attributes['status'] . '</span>';
+                        $status = '<span class="py-1 px-2 rounded-md bg-red-500">Status:' . $attributes['status'] . '</span>';
                         break;
                 }
                 return $status;

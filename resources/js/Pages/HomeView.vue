@@ -1,5 +1,5 @@
 <script setup>
-import { Head } from "@inertiajs/vue3";
+import { Head, usePage } from "@inertiajs/vue3";
 import { computed, ref, onMounted } from "vue";
 import { useMainStore } from "@/stores/main";
 import {
@@ -40,18 +40,30 @@ const mainStore = useMainStore();
 const clientBarItems = computed(() => mainStore.clients.slice(0, 4));
 
 const transactionBarItems = computed(() => mainStore.history);
+
+const props = usePage().props;
+const infoUser = computed(() => {
+    if (props.caborName && props.user_roles) {
+        return `${props.user_roles[0]} : ${props.caborName}`;
+    } else if (props.user_roles) {
+        return props.user_roles[0];
+    }
+});
 </script>
 
 <template>
     <LayoutAuthenticated>
         <Head title="Dashboard" />
+
         <SectionMain>
-            {{ $auth.can("view_user") }}
-            {{ $auth.is("Superadmin") }}
+            <!-- {{ $auth.can("view_user") }} -->
+            <!-- {{ $auth.is("Superadmin") }} -->
+
+            <!-- {{ $page.props }} -->
 
             <SectionTitleLineWithButton
                 :icon="mdiChartTimelineVariant"
-                title="Overview"
+                :title="infoUser"
                 main
             >
                 <BaseButton
@@ -65,7 +77,7 @@ const transactionBarItems = computed(() => mainStore.history);
                 />
             </SectionTitleLineWithButton>
 
-            <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 mb-6">
+            <div class="grid grid-cols-1 gap-6 mb-6 lg:grid-cols-3">
                 <CardBoxWidget
                     trend="12%"
                     trend-type="up"
@@ -94,7 +106,7 @@ const transactionBarItems = computed(() => mainStore.history);
                 />
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div class="grid grid-cols-1 gap-6 mb-6 lg:grid-cols-2">
                 <div class="flex flex-col justify-between">
                     <CardBoxTransaction
                         v-for="(transaction, index) in transactionBarItems"
@@ -118,8 +130,6 @@ const transactionBarItems = computed(() => mainStore.history);
                     />
                 </div>
             </div>
-
-            <SectionBannerStarOnGitHub class="mt-6 mb-6" />
 
             <SectionTitleLineWithButton
                 :icon="mdiChartPie"

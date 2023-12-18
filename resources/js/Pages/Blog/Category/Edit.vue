@@ -63,11 +63,10 @@ const confirmDelete = (id) => {
                 router.delete(`/blog/category/delete/${id}`, {
                     preserveScroll: true,
                     onSuccess: (page) => {
-                        console.log(page);
-                        const message = page.props.flash.message;
-                        if (message && message.type == "error") {
+                        const message = page.props.flash;
+                        if (message.error) {
                             console.log(message);
-                            swalButtons.fire("Gagal!", "", "error");
+                            swalButtons.fire(message.error);
                         } else {
                             swalButtons.fire("Deleted!", "", "success");
                         }
@@ -98,19 +97,19 @@ const confirmDelete = (id) => {
                 />
             </SectionTitleLineWithButton>
 
-            <div class="flex justify-start mb-3 max-w-3xl">
+            <div class="flex justify-start max-w-3xl mb-3">
                 <h3 class="text-xl font-bold">
                     <Link
                         class="text-indigo-400 hover:text-indigo-600"
                         href="/blog/category"
                         >Blog</Link
                     >
-                    <span class="text-indigo-400 font-medium">/</span>
+                    <span class="font-medium text-indigo-400">/</span>
                     {{ form.name }}
                 </h3>
                 <img
                     v-if="category.image"
-                    class="block ml-4 w-8 h-8 rounded-full border border-gray-300 shadow dark:border-gray-600/70"
+                    class="block w-8 h-8 ml-4 border border-gray-300 rounded-full shadow dark:border-gray-600/70"
                     :src="category.image"
                 />
             </div>

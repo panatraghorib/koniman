@@ -32,6 +32,9 @@ const asideLgCloseClick = (event) => {
                         alt="logo"
                         class="header-logo w-full"
                     />
+                    <!-- <span class="font-medium dark:text-neutral-200"
+                        >TW elements</span
+                    > -->
                 </a>
             </div>
             <div class="flex w-full items-center justify-between px-4">

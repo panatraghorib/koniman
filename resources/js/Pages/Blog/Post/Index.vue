@@ -1,11 +1,9 @@
 <script setup>
-import { ref, computed, watch } from "vue";
-import { Head, Link, router, usePage } from "@inertiajs/vue3";
+import { Head, router } from "@inertiajs/vue3";
 import Swal from "sweetalert2";
 import { SwalButtonStyle } from "@/colors.js";
 
 import CardBox from "@/Components/CardBox.vue";
-import { useToast, TYPE } from "vue-toastification";
 import {
     Table,
     setTranslations,
@@ -18,7 +16,6 @@ import {
     mdiPencilCircle,
     mdiDeleteCircle,
     mdiRefresh,
-    mdiCloseCircleOutline,
     mdiArrowRightBoldCircleOutline,
     mdiInformationSlabBoxOutline,
 } from "@mdi/js";
@@ -28,14 +25,15 @@ import BaseButtons from "@/Components/BaseButtons.vue";
 import LayoutAuthenticated from "@/Layouts/LayoutAuthenticated.vue";
 import SectionTitleLineWithButton from "@/Components/SectionTitleLineWithButton.vue";
 import BaseIcon from "@/Components/BaseIcon.vue";
-import ToastNotification from "@/Components/ToastNotification.vue";
 import TableColumn from "@/Components/Datatables/TableColumn.vue";
 import DropdownAddSearch from "@/Components/Datatables/DropdownAddSearch.vue";
 import TableSearchRows from "@/Components/Datatables/TableSearchRows.vue";
 
-defineProps(["posts"]);
+const props = defineProps({
+    title: String,
+    posts: Object,
+});
 
-const formStatusWithHeader = ref(true);
 setTranslations({
     next: "Next",
     no_results_found: "No results found",
@@ -45,67 +43,6 @@ setTranslations({
     of: "dari",
     to: "-",
 });
-
-const toast = useToast();
-
-watch(
-    () => usePage().props.flash,
-    (flash) => {
-        let toastId = null;
-        if (flash.message) {
-            switch (flash.message.type) {
-                case "success":
-                    toastId = toast({
-                        component: ToastNotification,
-                        props: {
-                            type: TYPE.SUCCESS,
-                            title: flash.message.text,
-                        },
-                    });
-                    break;
-                case "error":
-                    toastId = toast({
-                        component: ToastNotification,
-                        props: { type: TYPE.ERROR, title: flash.message.text },
-                    });
-                    break;
-                default:
-                    toastId = toast({
-                        component: ToastNotification,
-                        props: {
-                            type: TYPE.DEFAULT,
-                            title: flash.message.text,
-                        },
-                    });
-                    break;
-            }
-        }
-
-        // if (flash.message.type.default) {
-        //     toastId = toast({
-        //         component: ToastNotification,
-        //         props: { type: TYPE.DEFAULT, title: flash.message.text },
-        //     });
-        // }
-        // if (flash.message.type.success) {
-        //     toastId = toast({
-        //         component: ToastNotification,
-        //         props: { type: TYPE.SUCCESS, title: flash.message.text },
-        //     });
-        // }
-        // if (flash.message.type.error) {
-        //     toastId = toast({
-        //         component: ToastNotification,
-        //         props: { type: TYPE.ERROR, title: flash.message.text },
-        //     });
-        // }
-
-        if (toastId !== null) {
-            setTimeout(() => toast.dismiss(toastId), 5000);
-        }
-    },
-    { deep: true }
-);
 
 const confirmDelete = (id) => {
     const swalButtons = Swal.mixin({
@@ -138,12 +75,12 @@ const confirmDelete = (id) => {
 
 <template>
     <LayoutAuthenticated>
-        <Head title="Artikel" />
+        <Head :title="props.title" />
 
         <SectionMain>
             <SectionTitleLineWithButton
                 :icon="mdiAccountGroup"
-                title="Artikel"
+                :title="props.title"
                 main
             />
 
@@ -170,7 +107,7 @@ const confirmDelete = (id) => {
                         </li>
                         <li class="me-2" role="presentation">
                             <button
-                                class="text-blue-600 inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                                class="inline-block p-4 text-blue-600 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
                                 id="dashboard-tab"
                                 data-tabs-target="#dashboard"
                                 type="button"
@@ -178,13 +115,13 @@ const confirmDelete = (id) => {
                                 aria-controls="dashboard"
                                 aria-selected="false"
                             >
-                                Perlu Verivikasi
+                                Perlu Verifikasi
                             </button>
                         </li>
                     </ul>
                 </div>
 
-                <div class="flex flex-row p-2 justify-end border-b">
+                <div class="flex flex-row justify-end p-2 border-b">
                     <BaseButton
                         route-name="post.create"
                         color="bg-blue-700 border-transparent mb-2 -mt-3 mx-3"
@@ -192,17 +129,18 @@ const confirmDelete = (id) => {
                         class="text-white"
                         :icon="mdiPlusCircleMultipleOutline"
                         small
+                        v-if="can('add_post')"
                     />
                 </div>
 
                 <!-- <template #table-wrapper>
-                    <div class="flex flex-col bg-red-300 pt-40">
+                    <div class="flex flex-col pt-40 bg-red-300">
                         <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                             <div
-                                class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8"
+                                class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8"
                             >
                                 <div
-                                    class="shadow border-b border-gray-200 relative"
+                                    class="relative border-b border-gray-200 shadow"
                                 ></div>
                             </div>
                         </div>
@@ -219,7 +157,7 @@ const confirmDelete = (id) => {
                 >
                     <template v-slot:tableReset="slotProps">
                         <button
-                            class="bg-slate-200 border rounded-md shadow-sm p-1 inline-flex justify-center text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mx-1 my-2"
+                            class="inline-flex justify-center p-1 mx-1 my-2 text-sm font-medium text-gray-700 border rounded-md shadow-sm bg-slate-200 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             @click.prevent="slotProps.onClick"
                         >
                             <BaseIcon :path="mdiRefresh" :size="`16`" />
@@ -254,10 +192,10 @@ const confirmDelete = (id) => {
                     <template v-slot:tableGlobalSearch="slotProps">
                         <div class="flex flex-row w-full mx-1">
                             <div
-                                class="relative text-gray-600 focus-within:text-gray-400 w-full"
+                                class="relative w-full text-gray-600 focus-within:text-gray-400"
                             >
                                 <span
-                                    class="absolute inset-y-0 left-0 flex items-center pl-2 pt-3"
+                                    class="absolute inset-y-0 left-0 flex items-center pt-3 pl-2"
                                 >
                                     <BaseIcon
                                         :path="mdiFileSearch"
@@ -269,7 +207,7 @@ const confirmDelete = (id) => {
                                     @input="
                                         slotProps.onChange($event.target.value)
                                     "
-                                    class="mt-2 block w-full pl-9 text-sm rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 dark:bg-slate-700 dark:border-slate-600"
+                                    class="block w-full mt-2 text-sm border-gray-300 rounded-md shadow-sm pl-9 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-slate-700 dark:border-slate-600"
                                     autocomplete="off"
                                 />
                             </div>
@@ -287,7 +225,7 @@ const confirmDelete = (id) => {
                                 size="15"
                                 class="text-gray-400"
                             />
-                            <span class="text-xs text-gray-400 py-1 italic">{{
+                            <span class="py-1 text-xs italic text-gray-400">{{
                                 post.approval_formated
                             }}</span>
                         </div>
@@ -303,7 +241,7 @@ const confirmDelete = (id) => {
 
                     <template #cell(actions)="{ item: post }">
                         <div
-                            class="flex flex-row rounded-md shadow-sm justify-end items-end"
+                            class="flex flex-row items-end justify-end rounded-md shadow-sm"
                             role="group"
                         >
                             <BaseButtons>

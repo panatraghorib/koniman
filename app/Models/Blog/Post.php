@@ -159,7 +159,9 @@ class Post extends Model
     public function scopePublished($query)
     {
         return $query->where('status', '=', '1')
-            ->where('published_at', '<=', Carbon::now());
+            ->where('approval', '=', '1')
+            ->where('published_at', '<=', Carbon::now())
+            ->orderBy('published_at', 'desc');
     }
 
     /**

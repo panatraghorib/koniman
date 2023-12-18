@@ -7,7 +7,7 @@ export const authPermission = () => {
 
     return {
         can(permission) {
-            const userPermissions = page.props.user.permissions; // Ganti dengan cara yang benar untuk mengambil peran pengguna
+            const userPermissions = page.props.user_permissions; // Ganti dengan cara yang benar untuk mengambil peran pengguna
 
             if (userPermissions.includes(permission)) {
                 return true;
@@ -21,7 +21,7 @@ export const authPermission = () => {
             // Contoh: return userPermissions.includes(permission);
         },
         is(role) {
-            const userRole = page.props.user.roles; // Ganti dengan cara yang benar untuk mengambil izin pengguna
+            const userRole = page.props.user_roles; // Ganti dengan cara yang benar untuk mengambil izin pengguna
             console.log(userRole);
 
             if (userRole.includes(role)) {

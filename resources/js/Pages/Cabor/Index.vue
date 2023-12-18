@@ -135,7 +135,7 @@ import DefaultAvatar from "/public/img/user-avatar.png";
             />
 
             <CardBox has-outline has-table>
-                <div class="flex flex-row p-2 justify-end border-b">
+                <div class="flex flex-row justify-end p-2 border-b">
                     <BaseButton
                         route-name="cabor.create"
                         color="bg-blue-700 border-transparent my-3 mx-3"
@@ -143,7 +143,7 @@ import DefaultAvatar from "/public/img/user-avatar.png";
                         class="text-white"
                         :icon="mdiPlusCircleMultipleOutline"
                         small
-                        v-if="$auth.can('add_cabor')"
+                        v-if="can('add_cabor')"
                     />
                 </div>
                 <Table
@@ -156,7 +156,7 @@ import DefaultAvatar from "/public/img/user-avatar.png";
                 >
                     <template v-slot:tableReset="slotProps">
                         <button
-                            class="bg-slate-200 border rounded-md shadow-sm p-1 inline-flex justify-center text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mx-1 my-2"
+                            class="inline-flex justify-center p-1 mx-1 my-2 text-sm font-medium text-gray-700 border rounded-md shadow-sm bg-slate-200 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             @click.prevent="slotProps.onClick"
                         >
                             <BaseIcon :path="mdiRefresh" :size="`16`" />
@@ -191,10 +191,10 @@ import DefaultAvatar from "/public/img/user-avatar.png";
                     <template v-slot:tableGlobalSearch="slotProps">
                         <div class="flex flex-row w-full mx-1">
                             <div
-                                class="relative text-gray-600 focus-within:text-gray-400 w-full"
+                                class="relative w-full text-gray-600 focus-within:text-gray-400"
                             >
                                 <span
-                                    class="absolute inset-y-0 left-0 flex items-center pl-2 pt-3"
+                                    class="absolute inset-y-0 left-0 flex items-center pt-3 pl-2"
                                 >
                                     <BaseIcon
                                         :path="mdiFileSearch"
@@ -206,7 +206,7 @@ import DefaultAvatar from "/public/img/user-avatar.png";
                                     @input="
                                         slotProps.onChange($event.target.value)
                                     "
-                                    class="mt-2 block w-full pl-9 text-sm rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 dark:bg-slate-700 dark:border-slate-600"
+                                    class="block w-full mt-2 text-sm border-gray-300 rounded-md shadow-sm pl-9 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-slate-700 dark:border-slate-600"
                                     autocomplete="off"
                                 />
                             </div>
@@ -231,6 +231,7 @@ import DefaultAvatar from "/public/img/user-avatar.png";
                                     class="text-white"
                                     :icon="mdiPencilCircle"
                                     small
+                                    v-if="can('edit_cabor')"
                                 />
                                 <BaseButton
                                     as="button"
@@ -238,6 +239,7 @@ import DefaultAvatar from "/public/img/user-avatar.png";
                                     class="text-white"
                                     :icon="mdiDeleteCircle"
                                     small
+                                    v-if="can('delete_cabor')"
                                     @click="confirmDelete(cabor.id)"
                                 />
                                 <BaseButton
@@ -246,6 +248,7 @@ import DefaultAvatar from "/public/img/user-avatar.png";
                                     class="text-white"
                                     :icon="mdiEye"
                                     small
+                                    v-if="can('read_cabor')"
                                 />
                             </BaseButtons>
                         </div>

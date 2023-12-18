@@ -1,10 +1,18 @@
-<script setup></script>
+<script setup>
+import LogoWhite from "/public/assets/images/logo/logo-white.svg";
+
+import EcommerseBrand from "/public/assets/images/footer/brands/ecommerce-html.svg";
+import TailgridsFooter from "/public/assets/images/footer/brands/tailgrids.svg";
+import GraygridsFooter from "/public/assets/images/footer/brands/graygrids.svg";
+import LineiconsFooter from "/public/assets/images/footer/brands/lineicons.svg";
+import UideckFooter from "/public/assets/images/footer/brands/uideck.svg";
+import AyrouiFooter from "/public/assets/images/footer/brands/ayroui.svg";
+import ShapeOne from "/public/assets/images/footer/shape-1.svg";
+import ShapeThree from "/public/assets/images/footer/shape-3.svg";
+</script>
 
 <template>
-    <footer
-        class="bg-black pt-20 lg:pt-[120px] relative z-10"
-        data-wow-delay=".15s"
-    >
+    <div>
         <div class="container">
             <div class="flex flex-wrap -mx-4">
                 <div class="w-full sm:w-1/2 md:w-1/2 lg:w-4/12 xl:w-3/12 px-4">
@@ -613,5 +621,5 @@
                 </svg>
             </span>
         </div>
-    </footer>
+    </div>
 </template>

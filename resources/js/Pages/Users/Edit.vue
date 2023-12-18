@@ -7,11 +7,13 @@ import {
     mdiAccountMultiplePlusOutline,
     mdiArrowLeftCircle,
     mdiMail,
+    mdiChevronRightBox,
 } from "@mdi/js";
 
 import LayoutAuthenticated from "@/Layouts/LayoutAuthenticated.vue";
 import CardBox from "@/Components/CardBox.vue";
 import BaseButton from "@/Components/BaseButton.vue";
+import BaseIcon from "@/Components/BaseIcon.vue";
 import SectionMain from "@/Components/SectionMain.vue";
 import FormFilePicker from "@/Components/FormFilePicker.vue";
 import FormDatePicker from "@/Components/FormDatePicker.vue";
@@ -19,7 +21,6 @@ import FormField from "@/Components/FormField.vue";
 import FormControl from "@/Components/FormControl.vue";
 import BaseButtons from "@/Components/BaseButtons.vue";
 import SectionTitleLineWithButton from "@/Components/SectionTitleLineWithButton.vue";
-import FormCheckRadioGroup from "@/Components/FormCheckRadioGroup.vue";
 
 const data = defineProps({ roles: Object, cabor: Object });
 const InstansiHasCaborId = 3;
@@ -80,22 +81,30 @@ function submit() {
                 />
             </SectionTitleLineWithButton>
 
-            <div class="flex justify-start mb-3 max-w-3xl">
-                <h3 class="text-xl font-bold">
+            <div class="flex justify-start max-w-3xl mb-3">
+                <BaseIcon
+                    :path="mdiChevronRightBox"
+                    size="18"
+                    class="text-gray-400"
+                />
+
+                <h3 class="font-medium text-md">
                     <Link
-                        class="text-indigo-400 hover:text-indigo-600"
+                        class="text-blue-600 hover:text-blue-700"
                         href="/users"
                         >Users</Link
                     >
-                    <span class="text-indigo-400 font-medium">/</span>
-                    {{ form.name }}
+                    <span class="font-medium text-blue-600">/</span>
+                    <span class="capitalize">
+                        {{ user.name }}
+                    </span>
                     <span class="text-sm text-blue-700 dark:text-red-400">
-                        (@{{ form.username }})
+                        (@{{ user.username }})
                     </span>
                 </h3>
                 <img
                     v-if="user.avatar"
-                    class="block ml-4 w-8 h-8 rounded-full border border-gray-300 shadow dark:border-gray-600/70"
+                    class="block w-8 h-8 ml-4 border border-gray-300 rounded-full shadow dark:border-gray-600/70"
                     :src="user.avatar"
                 />
             </div>
@@ -149,7 +158,7 @@ function submit() {
                     </FormField>
                 </div>
                 <div class="grid gap-6 md:grid-cols-2">
-                    <FormField label="Kontak">
+                    <FormField label="Nomor Telepon" help="+62/08">
                         <FormControl
                             v-model="form.mobile"
                             :error="form.errors.mobile"

@@ -18,7 +18,7 @@ const props = defineProps({
 const emit = defineEmits(["menu-click"]);
 
 const itemHref = computed(() =>
-    props.item.route ? route(props.item.route) : props.item.href
+    props.item.route ? props.item.route : props.item.href
 );
 
 const is = computed(() => {
@@ -96,7 +96,7 @@ onBeforeUnmount(() => {
         :is="is"
         v-else
         ref="root"
-        class="block lg:flex items-center relative cursor-pointer"
+        class="relative items-center block cursor-pointer lg:flex"
         :class="componentClass"
         :href="itemHref"
         :target="item.target ?? null"
@@ -111,7 +111,7 @@ onBeforeUnmount(() => {
         >
             <UserAvatarCurrentUser
                 v-if="item.isCurrentUser"
-                class="w-6 h-6 mr-3 inline-flex"
+                class="inline-flex w-6 h-6 mr-3"
             />
             <BaseIcon
                 v-if="item.icon"
@@ -126,7 +126,7 @@ onBeforeUnmount(() => {
             <BaseIcon
                 v-if="item.menu"
                 :path="isDropdownActive ? mdiChevronUp : mdiChevronDown"
-                class="hidden lg:inline-flex transition-colors"
+                class="hidden transition-colors lg:inline-flex"
             />
         </div>
         <div

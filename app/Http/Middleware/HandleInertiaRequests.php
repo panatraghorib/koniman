@@ -2,9 +2,10 @@
 
 namespace App\Http\Middleware;
 
-use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -32,7 +33,6 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
-            'nameInstansi' => env('INSTANSI_NAME','LaraTra'),
             'auth' => [
                 'user' => $request->user(),
             ],
@@ -40,12 +40,25 @@ class HandleInertiaRequests extends Middleware
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
+            // 'flash' => [
+            //     'message' => fn () => $request->session()->get('message')
+            // ],
             'flash' => [
-                'message' => fn () => $request->session()->get('message')
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+                'warning' => fn () => $request->session()->get('warning'),
+                'info' => fn () => $request->session()->get('info'),
             ],
             'toast' => session('toast'),
-            'user.roles' => $request->user() ? $request->user()->roles->pluck('name') : [],
-            'user.permissions' => $request->user() ? $request->user()->getPermissionsViaRoles()->pluck('name') : [],
+            'user_roles' => $request->user() ? $request->user()->roles->pluck('name') : [],
+            'user_permissions' => $request->user() ? $request->user()->getPermissionsViaRoles()->pluck('name') : [],
+            'isAdmin' => auth()->user()?->hasRole('Superadmin'),
+            'setting' => [
+                'instansi_name' => setting('agencyName'),
+                'website_name' => setting('appName', env('APP_NAME', 'LaraTra')),
+                'website_logo' => setting('websiteLogo') ? URL::to(asset('storage/' . setting('websiteLogo'))) : null,
+                // 'website_logo' => setting('websiteLogo') ? URL::route('image', ['path' => setting('websiteLogo')]) : null,
+            ],
         ];
     }
 }

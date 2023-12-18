@@ -17,7 +17,7 @@ import CardBox from "@/Components/CardBox.vue";
 import SectionMain from "@/Components/SectionMain.vue";
 import BaseButton from "@/Components/BaseButton.vue";
 import SectionTitleLineWithButton from "@/Components/SectionTitleLineWithButton.vue";
-import ToastNotification from "@/Components/ToastNotification.vue";
+import ToastNotification from "@/Components/ToastNotificationx.vue";
 
 import pickBy from "lodash/pickBy";
 import mapValues from "lodash/mapValues";
@@ -117,7 +117,7 @@ import DefaultImage from "/public/img/default-image.png";
             />
 
             <CardBox has-outline has-table>
-                <div class="flex flex-row p-2 justify-end border-b">
+                <div class="flex flex-row justify-end p-2 border-b">
                     <BaseButton
                         route-name="category.create"
                         color="bg-blue-700 border-transparent my-3 mx-3"
@@ -125,19 +125,20 @@ import DefaultImage from "/public/img/default-image.png";
                         class="text-white"
                         :icon="mdiPlusCircleMultipleOutline"
                         small
+                        v-if="can('add_category')"
                     />
                 </div>
 
-                <div class="flex flex-row p-2 justify-end border-b">
+                <div class="flex flex-row justify-end p-2 border-b">
                     <search-filter
                         v-model="form.search"
-                        class="mr-4 w-full"
+                        class="w-full mr-4"
                         @reset="reset"
                     >
                         <label class="block text-gray-700">Trashed:</label>
                         <select
                             v-model="form.trashed"
-                            class="form-select mt-1 w-full"
+                            class="w-full mt-1 form-select"
                         >
                             <option :value="null" />
                             <option value="with">With Trashed</option>
@@ -149,12 +150,12 @@ import DefaultImage from "/public/img/default-image.png";
                 <table class="w-full whitespace-nowrap">
                     <thead>
                         <tr
-                            class="bg-slate-300 dark:bg-slate-700 text-left font-medium text-gray-800 dark:text-slate-300 text-md"
+                            class="font-medium text-left text-gray-800 bg-slate-300 dark:bg-slate-700 dark:text-slate-300 text-md"
                         >
-                            <th class="pb-4 pt-6 px-6">Kategori</th>
-                            <th class="pb-4 pt-6 px-6">Grup</th>
-                            <th class="pb-4 pt-6 px-6">Image</th>
-                            <th class="pb-4 pt-6 px-6">Act</th>
+                            <th class="px-6 pt-6 pb-4">Kategori</th>
+                            <th class="px-6 pt-6 pb-4">Grup</th>
+                            <th class="px-6 pt-6 pb-4">Image</th>
+                            <th class="px-6 pt-6 pb-4">Act</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -172,7 +173,7 @@ import DefaultImage from "/public/img/default-image.png";
                                     <icon
                                         v-if="category.deleted_at"
                                         name="trash"
-                                        class="flex-shrink-0 ml-2 w-3 h-3 fill-gray-400"
+                                        class="flex-shrink-0 w-3 h-3 ml-2 fill-gray-400"
                                     />
                                 </Link>
                             </td>

@@ -1,6 +1,5 @@
 <script setup>
 import { ref, computed } from "vue";
-// import { RouterLink } from 'vue-router'
 import { Link, usePage } from "@inertiajs/vue3";
 import { mdiMinus, mdiPlus } from "@mdi/js";
 import { getButtonColor } from "@/colors.js";
@@ -16,31 +15,29 @@ const props = defineProps({
     isDropdownList: Boolean,
 });
 
+const hasColor = computed(() => props.item && props.item.color);
+
 const itemHref = computed(() =>
     props.item.route ? route(props.item.route) : props.item.href
 );
 
-const darkModeStore = useDarkModeStore();
-
 const asideMenuItemActiveStyle = computed(() =>
-    hasColor.value ? "" : "aside-menu-item-active font-medium"
+    hasColor.value ? "" : "aside-menu-item-active"
 );
 
 const activeInactiveStyle = computed(() =>
     props.item.route && route().current(props.item.route)
-        ? "font-medium text-white"
-        : "text-gray-600 dark:text-gray-300"
+        ? "font-medium text-[#075783]"
+        : "dark:text-gray-300"
 );
 
 const activeInactiveLiStyle = computed(() =>
     props.item.route && route().current(props.item.route)
-        ? "border-t border-b border-l border-slate-50 dark:border-slate-800 shadow-inner text-gray-800 font-medium bg-blue-700 mb-1 rounded-l-lg dark:bg-blue-700"
-        : "font-normal shadow"
+        ? "border-t border-b-2 border-l border-b-[#075783] dark:border-slate-800 mb-1 rounded-l-lg shadow"
+        : "shadow"
 );
 
 const emit = defineEmits(["menu-click"]);
-
-const hasColor = computed(() => props.item && props.item.color);
 
 const isDropdownActive = ref(false);
 
@@ -61,24 +58,38 @@ const menuClick = (event) => {
     }
 };
 
-const page = usePage();
-const userRoles = page.props.user.roles;
-const userPermission = page.props.user.permissions;
+const isAdmin = usePage().props.isAdmin;
+const userPermissions = usePage().props.user_permissions;
+
+// filter menu berdasarkan permissions
+const subMenuFiltered = computed(() => {
+    if (props.item.hasOwnProperty("menu")) {
+        return props.item.menu.filter((subMenuItem) => {
+            if (isAdmin) {
+                return true;
+            } else if (subMenuItem.hasOwnProperty("default")) {
+                return true;
+            } else {
+                if (subMenuItem.hasOwnProperty("permission")) {
+                    return subMenuItem.permission.some((permission) => {
+                        console.log(userPermissions.includes(permission));
+                        return userPermissions.includes(permission);
+                    });
+                }
+            }
+        });
+    }
+});
 </script>
-<!-- userRoles.includes('Superadmin') -->
-<!-- userPermission.includes(item.permission) -->
+
 <template>
-    <li
-        :class="activeInactiveLiStyle"
-        class="ml-1"
-        v-if="$auth.can(item.permission)"
-    >
+    <li :class="activeInactiveLiStyle" class="ml-1">
         <component
             :is="item.route ? Link : 'a'"
             :href="itemHref"
             :target="item.target ?? null"
-            class="flex cursor-pointer"
-            :class="componentClass"
+            class="flex font-sans font-normal cursor-pointer hover:text-blue-700"
+            :class="[componentClass]"
             @click="menuClick"
         >
             <BaseIcon
@@ -98,6 +109,7 @@ const userPermission = page.props.user.permissions;
                 ]"
                 >{{ item.label }}</span
             >
+
             <BaseIcon
                 v-if="hasDropdown"
                 :path="isDropdownActive ? mdiMinus : mdiPlus"
@@ -108,7 +120,7 @@ const userPermission = page.props.user.permissions;
         </component>
         <AsideMenuList
             v-if="hasDropdown"
-            :menu="item.menu"
+            :menu="subMenuFiltered"
             :class="[
                 'aside-menu-dropdown',
                 isDropdownActive ? 'block dark:bg-slate-800/50' : 'hidden',

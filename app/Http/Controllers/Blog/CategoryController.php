@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Blog;
 
 use Inertia\Inertia;
+use App\Authorizable;
 use Illuminate\Http\Request;
 use App\Models\Blog\Category;
 use Illuminate\Support\Facades\DB;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Request as FacadeRequest;
 
 class CategoryController extends Controller
 {
+    use Authorizable;
 
     protected $moduleName = "Kategori";
     /**
@@ -52,35 +54,42 @@ class CategoryController extends Controller
     {
         DB::beginTransaction();
 
-        $request->validate([
-            'name' => ['required', 'string', 'min:5', 'unique:App\Models\Blog\Category,name'],
-            'image' => ['nullable']
-        ]);
+        try {
 
-        $category = Category::create([
-            'name' => $request->name,
-            'image' => $request->file('image') ? $request->file('image')->store('categories') : null,
-            'meta_title' => $request->meta_title,
-            'meta_description' => $request->meta_description,
-            'meta_keyword' => $request->meta_keyword,
-            'status' => $request->status,
-            'created_by' => auth()->user()->id,
-        ]);
 
-        activity('Blog Kategory')
-            ->causedBy(auth()->user()->id ?? null)
-            ->withProperties(['attributes' => $category])
-            ->performedOn($category)
-            ->event('created')
-            ->log('Data ' . $category->name . ' has been created');
+            $request->validate([
+                'name' => ['required', 'string', 'min:5', 'unique:App\Models\Blog\Category,name'],
+                'image' => ['nullable']
+            ]);
 
-        DB::commit();
-        DB::rollBack();
+            $category = Category::create([
+                'name' => $request->name,
+                'image' => $request->file('image') ? $request->file('image')->store('categories') : null,
+                'meta_title' => $request->meta_title,
+                'meta_description' => $request->meta_description,
+                'meta_keyword' => $request->meta_keyword,
+                'status' => $request->status,
+                'created_by' => auth()->user()->id,
+            ]);
 
-        return redirect()->route('category.index')->with('message', [
-            'type' => 'success',
-            'text' => 'Data telah ditsimpan!',
-        ]);
+            activity('Blog Kategory')
+                ->causedBy(auth()->user()->id ?? null)
+                ->withProperties(['attributes' => $category])
+                ->performedOn($category)
+                ->event('created')
+                ->log('Data ' . $category->name . ' has been created');
+
+            DB::commit();
+
+
+            return redirect()->route('category.index')->with(
+                'success',
+                __('app.label.created_successfully', ['name' => $category->name])
+            );
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return back()->with('error', __('app.label.created_error', ['name' => __('app.label.role')]) . $th->getMessage());
+        }
     }
 
     /**
@@ -120,38 +129,44 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'min:5', 'unique:App\Models\Blog\Category,name,' . $category->id],
-            'image' => ['nullable']
-        ]);
+        DB::beginTransaction();
 
-        $category->update([
-            'name' => $request->name,
-            'meta_title' => $request->meta_title,
-            'meta_description' => $request->meta_description,
-            'meta_keyword' => $request->meta_keyword,
-            'status' => $request->status,
-            'updated_by' => auth()->user()->id,
-        ]);
+        try {
+            $request->validate([
+                'name' => ['required', 'string', 'min:5', 'unique:App\Models\Blog\Category,name,' . $category->id],
+                'image' => ['nullable']
+            ]);
 
-        if (request()->file('image')) {
-            $category->update(['image' => $request->file('image')->store('categories')]);
+            $category->update([
+                'name' => $request->name,
+                'meta_title' => $request->meta_title,
+                'meta_description' => $request->meta_description,
+                'meta_keyword' => $request->meta_keyword,
+                'status' => $request->status,
+                'updated_by' => auth()->user()->id,
+            ]);
+
+            if (request()->file('image')) {
+                $category->update(['image' => $request->file('image')->store('categories')]);
+            }
+
+            activity('Blog Kategory')
+                ->causedBy(auth()->user()->id ?? null)
+                ->withProperties(['attributes' => $category])
+                ->performedOn($category)
+                ->event('updated')
+                ->log('Data ' . $category->name . ' has been updated');
+
+            DB::commit();
+
+            return redirect()->route('category.index')->with(
+                'success',
+                __('app.label.created_successfully', ['name' => $category->name])
+            );
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return back()->with('error', __('app.label.created_error', ['name' => __('app.label.role')]) . $th->getMessage());
         }
-
-        activity('Blog Kategory')
-            ->causedBy(auth()->user()->id ?? null)
-            ->withProperties(['attributes' => $category])
-            ->performedOn($category)
-            ->event('updated')
-            ->log('Data ' . $category->name . ' has been updated');
-
-        DB::commit();
-        DB::rollBack();
-
-        return redirect()->route('category.index')->with('message', [
-            'type' => 'success',
-            'text' => 'Data telah diperbarui!',
-        ]);
     }
 
     /**
@@ -160,11 +175,10 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
 
+        // dump($category->name);
+        // exit;
         if ($category->hasRelations('posts')) {
-            return redirect()->route('category.index')->with('message', [
-                'type' => 'error',
-                'text' => 'Tidak Dapat Menghapus Category!',
-            ]);
+            return back()->with('error', __('app.label.deleted_error', ['name' => $category->name]));
         }
 
         $category->delete();
@@ -176,9 +190,9 @@ class CategoryController extends Controller
             ->event('created')
             ->log('Category with' . $category->name . ' has been deleted');
 
-        return redirect()->route('category.index')->with('message', [
-            'type' => 'success',
-            'text' => 'Category telah dihapus!',
-        ]);
+        return redirect()->route('category.index')->with(
+            'success',
+            __('app.label.deleted_successfully', ['name' => $category->name])
+        );
     }
 }

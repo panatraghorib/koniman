@@ -6,6 +6,7 @@ import { Link, router } from "@inertiajs/vue3";
 import frontendMenu from "@/frontendMenu.js";
 
 import Navbar from "@/Components/Frontend/Navbar/FrontNavbar.vue";
+import FooterSection from "@/Components/Frontend/FooterSection.vue";
 
 const menuClick = (event, item) => {
     if (item.isToggleLightDark) {
@@ -25,11 +26,21 @@ onMounted(() => {
 
 <template>
     <div
-        class="ud-header absolute top-0 left-0 z-40 flex w-full items-center bg-red-600/70"
+        class="ud-header absolute top-0 left-0 z-40 flex w-full items-center bg-transparent"
     >
         <Navbar :menu="frontendMenu" @menu-click="menuClick" />
     </div>
-    <slot />
+
+    <main>
+        <slot />
+    </main>
+
+    <footer
+        class="relative z-10 bg-[#090E34] pt-20 lg:pt-[100px]"
+        data-wow-delay=".15s"
+    >
+        <footer-section />
+    </footer>
 
     <a
         href="javascript:void(0)"

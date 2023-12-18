@@ -1,24 +1,35 @@
 <?php
 
 use Inertia\Inertia;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Session;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CaborController;
 use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SettingController;
+use App\Http\Resources\Cabor\CaborResource;
 use App\Http\Controllers\Blog\PostController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ImageUploadController;
 use App\Http\Controllers\Blog\CategoryController;
+use App\Http\Controllers\Frontend\HomeController;
 
-Route::get('/', function () {
-    return Inertia::render('Frontend/Home', [
-        'canLogin' => Route::has('login'),
-        // 'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+// Route::get('/', function () {
+//     return Inertia::render('Frontend/HomeSlider', [
+//         'canLogin' => Route::has('login'),
+//         // 'canRegister' => Route::has('register'),
+//         'laravelVersion' => Application::VERSION,
+//         'phpVersion' => PHP_VERSION,
+//     ]);
+// });
+
+#FRONTEND
+Route::get('/', HomeController::class);
+#END FRONTEND
 
 Route::get('/forms', function () {
     return Inertia::render('FormsView');
@@ -28,7 +39,11 @@ Route::middleware('auth')->group(function () {
 
     #DASHBOARD ROUTE
     Route::get('/dashboard', function () {
-        return Inertia::render('HomeView');
+        $infoUser = auth()->user()?->cabor()?->first();
+
+        return Inertia::render('HomeView', [
+            'caborName' => optional($infoUser)->cabor_name
+        ]);
     })->middleware(['verified'])->name('dashboard');
 
     #PROFILE ROUTES
@@ -79,9 +94,32 @@ Route::middleware('auth')->group(function () {
         Route::delete('post/delete/{post}', [PostController::class, 'destroy'])->name('post.delete');
     });
 
-
+    #CKEditor Imaga Upload
     Route::post('upload-image', [ImageUploadController::class, 'upload'])->name('image.upload');
     Route::post('delete-image', [ImageUploadController::class, 'delete'])->name('image.delete');
+
+    #Setting
+    Route::group(['prefix' => 'settings'], function () {
+        Route::group(['prefix' => 'app'], function () {
+            Route::get('general', [SettingController::class, 'index'])->name('general.edit');
+            Route::put('general/update', [SettingController::class, 'store'])->name('general.store');
+        });
+
+        //ROLES
+        Route::group(['prefix' => 'roles'], function () {
+            Route::get('/', [RoleController::class, 'index'])->name('role.index');
+            Route::get('add', [RoleController::class, 'create'])->name('role.create');
+            Route::post('store', [RoleController::class, 'store'])->name('role.store');
+            Route::get('{role}/edit', [RoleController::class, 'edit'])->name('role.edit');
+            Route::put('update/{role}', [RoleController::class, 'update'])->name('role.update');
+            Route::delete('delete/{role}', [RoleController::class, 'destroy'])->name('role.delete');
+        });
+
+        //PERMISSIONS
+        Route::group(['prefix' => 'permissions'], function () {
+            Route::get('/', [PermissionController::class, 'index'])->name('permission.index');
+        });
+    });
 });
 
 
@@ -95,5 +133,24 @@ Route::get('/test-front', function () {
 Route::get('/img/{path}', [ImagesController::class, 'show'])
     ->where('path', '.*')
     ->name('image');
+
+#Locale
+Route::get('/trans/{locale}', function (string $locale) {
+    if (!in_array($locale, ['en', 'id'])) {
+        abort(400);
+    }
+
+    App::setLocale($locale);
+
+    return redirect()->back()->with('message', [
+        'type' => 'error',
+        'text' => 'Translated',
+    ]);
+})->name('trans');
+
+Route::get('/setLang/{locale}', function ($locale) {
+    Session::put('locale', $locale);
+    return back();
+})->name('setlang');
 
 require __DIR__ . '/auth.php';

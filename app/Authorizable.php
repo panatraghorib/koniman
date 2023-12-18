@@ -28,6 +28,7 @@ trait Authorizable
     //  'edit',
     //  'delete',
     //  'restore',
+    //  'read'
 
     /**
      * Override of callAction to perform the authorization before.
@@ -50,8 +51,9 @@ trait Authorizable
     {
         $routeName = explode('.', Request::route()->getName());
         $action = Arr::get($this->getAbilities(), $method);
-        // get method name with ebility
-        return $action ? $action . '_' . $routeName[1] : null;
+        // get method name with ability
+        //view_role, view_user
+        return $action ? $action . '_' . $routeName[0] : null;
     }
 
     private function getAbilities()

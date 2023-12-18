@@ -3,34 +3,37 @@
 namespace App\Http\Controllers\Blog;
 
 use Inertia\Inertia;
-use Inertia\Response;
+use App\Authorizable;
 use App\Models\Blog\Post;
-use Illuminate\Http\Request;
 use App\Models\Blog\Category;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
-use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
-use Spatie\QueryBuilder\AllowedInclude;
 use App\Http\Resources\Blog\PostResource;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Resources\Blog\PostCollection;
 use App\Http\Requests\Blog\ArticleAddRequest;
 use App\Http\Requests\Blog\ArticleUpdateRequest;
 use ProtoneMedia\LaravelQueryBuilderInertiaJs\InertiaTable;
+use Spatie\QueryBuilder\AllowedSort;
+use Inertia\Response;
+use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedInclude;
 
 class PostController extends Controller
 {
+    use Authorizable;
+
 
     protected $moduleName = "Artikel";
 
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): Response
     {
 
         // TODO: fix this
@@ -48,9 +51,9 @@ class PostController extends Controller
         $numberPaginate = request('perPage') ?? 10;
 
         if (auth()->user()->hasRole('Superadmin')) {
-            $postBy = Post::class;
+            $postBy = Post::with('category');
         } else {
-            $postBy = auth()->user()->posts();
+            $postBy = auth()->user()->posts()->with('category');
         }
 
         $posts = QueryBuilder::for($postBy)
@@ -72,6 +75,7 @@ class PostController extends Controller
             'Blog/Post/Index',
             [
                 'posts' => new PostCollection($posts),
+                'title' => __('app.label.post')
             ]
         )->table(
             function (InertiaTable $table) {
@@ -94,7 +98,7 @@ class PostController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): Response
     {
         $categories = Category::orderBy('name')->get();
         return Inertia::render('Blog/Post/Create', [
@@ -112,47 +116,51 @@ class PostController extends Controller
     public function store(ArticleAddRequest $request)
     {
 
-        // dump($request->all());
-        // exit;
+        TODO: // drafting or publish on role how?
+
         DB::beginTransaction();
 
-        TODO: // drafting or publish on role how?
-        if (!auth()->user()->hasRole('Superadmin')) {
-            $approval = 1;
+        try {
+            $approval = 0;
+            if (auth()->user()->hasRole('Superadmin')) {
+                $approval = 1;
+            }
+
+            $post = Post::create([
+                "name" => $request->name,
+                "intro" => $request->intro,
+                "content" => $request->content,
+                "type" => 'Artikel',
+                "is_featured" => $request->isFeatured,
+                "status" => $request->status,
+                "approval" => $approval,
+                "created_by_name" => auth()->user()->name,
+                "created_by_alias" => $request->created_by_alias,
+                "category_id" => $request->category_id,
+                "meta_title" => $request->meta_title,
+                "meta_keywords" => $request->meta_keywords,
+                "meta_description" => $request->meta_description,
+                "meta_og_image" => $request->meta_og_image,
+                "meta_og_url" => $request->meta_og_url,
+                "featured_image" => $request->featured_image ? $request->file('featured_image')->store('blog-images') : null,
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('post.index')->with(
+                'success',
+                __('app.label.created_successfully', ['name' => $post->name])
+            );
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return back()->with('error', __('app.label.created_error', ['name' => __('app.label.role')]) . $th->getMessage());
         }
-
-        $post = Post::create([
-            "name" => $request->name,
-            "intro" => $request->intro,
-            "content" => $request->content,
-            "type" => 'Artikel',
-            "is_featured" => $request->isFeatured,
-            "status" => $request->status,
-            "approval" => $approval,
-            "created_by_name" => auth()->user()->name,
-            "created_by_alias" => $request->created_by_alias,
-            "category_id" => $request->category_id,
-            "meta_title" => $request->meta_title,
-            "meta_keywords" => $request->meta_keywords,
-            "meta_description" => $request->meta_description,
-            "meta_og_image" => $request->meta_og_image,
-            "meta_og_url" => $request->meta_og_url,
-            "featured_image" => $request->featured_image ? $request->file('featured_image')->store('blog-images') : null,
-        ]);
-
-        DB::commit();
-        DB::rollBack();
-
-        return redirect()->route('post.index')->with('message', [
-            'type' => 'error',
-            'text' => 'Artikel telah ditambah!',
-        ]);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Post $post)
+    public function show(Post $post): Response
     {
         $post = new PostResource($post);
 
@@ -191,7 +199,7 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Post $post)
+    public function edit(Post $post): Response
     {
         $categories = Category::orderBy('name')->get();
 
@@ -211,40 +219,42 @@ class PostController extends Controller
     public function update(ArticleUpdateRequest $request, Post $post)
     {
 
-        if ($request->has('approval')) {
-            $approval = $request->approval;
-        } else {
-            $approval = 0;
+        DB::beginTransaction();
+
+        try {
+            $post->update([
+                "name" => $request->name,
+                "intro" => $request->intro,
+                "content" => $request->content,
+                "type" => 'Artikel',
+                "is_featured" => $request->isFeatured,
+                "status" => $request->status,
+                "created_by_name" => auth()->user()->name,
+                "created_by_alias" => $request->created_by_alias,
+                "category_id" => $request->category_id,
+                "meta_title" => $request->meta_title,
+                "meta_keywords" => $request->meta_keywords,
+                "meta_description" => $request->meta_description,
+                "meta_og_image" => $request->meta_og_image,
+                "meta_og_url" => $request->meta_og_url,
+            ]);
+
+            if (request()->file('featured_image')) {
+                // $post->update(['featured_image' => $request->file('featured_image')->store('blog-images')]);//auto naming file
+                $file = $request->file('featured_image');
+                $post->update(['featured_image' => $file->storeAs('featured-images', "blogImage-{$post->id}.{$file->getClientOriginalExtension()}")]);
+            }
+
+            DB::commit();
+
+            return redirect()->route('post.index')->with(
+                'success',
+                __('app.label.updated_successfully', ['name' => 'item'])
+            );
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return back()->with('error', __('app.label.updated_error', ['name' => __('app.label.post')]) . $th->getMessage());
         }
-
-        $post->update([
-            "name" => $request->name,
-            "intro" => $request->intro,
-            "content" => $request->content,
-            "type" => 'Artikel',
-            "is_featured" => $request->isFeatured,
-            "status" => $request->status,
-            "approval" => $approval,
-            "created_by_name" => auth()->user()->name,
-            "created_by_alias" => $request->created_by_alias,
-            "category_id" => $request->category_id,
-            "meta_title" => $request->meta_title,
-            "meta_keywords" => $request->meta_keywords,
-            "meta_description" => $request->meta_description,
-            "meta_og_image" => $request->meta_og_image,
-            "meta_og_url" => $request->meta_og_url,
-        ]);
-
-        if (request()->file('featured_image')) {
-            // $post->update(['featured_image' => $request->file('featured_image')->store('blog-images')]);//auto naming file
-            $file = $request->file('featured_image');
-            $post->update(['featured_image' => $file->storeAs('featured-images', "blogImage-{$post->id}.{$file->getClientOriginalExtension()}")]);
-        }
-
-        return redirect()->route('post.index')->with('message', [
-            'type' => 'success',
-            'text' => 'Data telah diperbarui!',
-        ]);
     }
 
     /**
@@ -255,9 +265,9 @@ class PostController extends Controller
 
         $post->delete();
 
-        return redirect()->back()->with('message', [
-            'type' => 'success',
-            'text' => 'Item telah dihapus!',
-        ]);
+        return redirect()->route('post.index')->with(
+            'success',
+            __('app.label.deleted_successfully', ['name' => 'item'])
+        );
     }
 }

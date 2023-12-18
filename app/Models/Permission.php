@@ -5,10 +5,10 @@ namespace App\Models;
 
 class Permission extends \Spatie\Permission\Models\Permission
 {
-    protected  $guard_name = 'web';
 
     public static function defaultPermissions()
     {
+
         return [
             'view_user',
             'add_user',

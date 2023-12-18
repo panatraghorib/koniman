@@ -4,26 +4,41 @@ import {
     mdiCloud,
     mdiCrop,
     mdiAccount,
-    mdiCogOutline,
     mdiEmail,
     mdiLogout,
     mdiThemeLightDark,
-    mdiGithub,
-    mdiReact,
+    mdiTranslate,
+    mdiEarth,
 } from "@mdi/js";
 
 export default [
     {
+        icon: mdiTranslate,
+        label: "",
+        menu: [
+            {
+                icon: mdiEarth,
+                label: "ID",
+                route: route("trans", "id"),
+            },
+            {
+                icon: mdiEarth,
+                label: "EN",
+                route: route("trans", "en"),
+            },
+        ],
+    },
+    {
         icon: mdiMenu,
-        label: "Sample menu",
+        label: "Test",
         menu: [
             {
                 icon: mdiClockOutline,
-                label: "Item One",
+                label: "ID",
             },
             {
                 icon: mdiCloud,
-                label: "Item Two",
+                label: "EN",
             },
             {
                 isDivider: true,
@@ -40,7 +55,7 @@ export default [
             {
                 icon: mdiAccount,
                 label: "My Profile",
-                route: "profile.edit",
+                route: route("profile.edit"),
             },
             // {
             //     icon: mdiCogOutline,

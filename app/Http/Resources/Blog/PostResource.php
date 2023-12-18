@@ -24,7 +24,7 @@ class PostResource extends JsonResource
             "type" => $this->type,
             "category_id" => $this->category_id,
             "isFeatured" => $this->is_featured,
-            "featured_image" => $this->featured_image ? URL::route('image', ['path' => $this->featured_image, 'w' => 200, 'h' => 200, 'fit' => 'crop']) : null,
+            "featured_image" => $this->featured_image ? URL::route('image', ['path' => $this->featured_image]) : null,
             "meta_title" => $this->meta_title,
             "meta_keywords" => $this->meta_keywords,
             "meta_description" => $this->meta_description,
@@ -47,7 +47,8 @@ class PostResource extends JsonResource
             // "created_at" => $this->created_at,
             // "updated_at" => $this->updated_at,
             // "deleted_at" => $this->deleted_at,
-            "category" => $this->category,
+            // "category" => $this->category,
+            "category" => new CategoryResource($this->whenLoaded('category')),
         ];
     }
 }

@@ -19,7 +19,7 @@ class CaborResource extends JsonResource
             "id" => $this->id,
             "cabor_name" => $this->cabor_name,
             "initial" => $this->initial,
-            "logo" => $this->logo ? URL::route('image', ['path' => $this->logo, 'w' => 100, 'h' => 100, 'fit' => 'crop']) : null,
+            "logo" => $this->logo ? URL::route('image', ['path' => $this->logo]) : null,
         ];
     }
 }

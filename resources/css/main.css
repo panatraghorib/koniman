@@ -1,6 +1,4 @@
-
-
-
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
 
 @import '_checkbox-radio-switch.css';
 @import '_progress.css';
@@ -43,7 +41,7 @@
 }
 
 .sticky #navbarCollapse li .ud-menu-scroll.active {
-    @apply text-primary opacity-100;
+    @apply opacity-100 text-primary;
 }
 
 /* .sticky .loginBtn {
@@ -51,11 +49,11 @@
 } */
 
 /* .sticky .signUpBtn { */
-/* @apply bg-primary text-white hover:bg-blue-dark hover:text-white; */
+/* @apply text-white bg-primary hover:bg-blue-dark hover:text-white; */
 /* } */
 
 .sticky .loginBtn {
-    @apply bg-primary text-white hover:bg-blue-dark hover:text-white;
+    @apply text-white bg-primary hover:bg-blue-dark hover:text-white;
 }
 
 .sticky #themeSwitcher~span {

@@ -50,7 +50,7 @@ const displayLabel = computed(() => {
         <label
             v-if="label"
             :for="labelFor"
-            class="block font-medium text-sm mb-2"
+            class="block mb-2 text-sm font-medium"
             >{{ displayLabel }}</label
         >
         <div :class="wrapperClass">
@@ -58,7 +58,7 @@ const displayLabel = computed(() => {
         </div>
         <div
             v-if="help"
-            class="text-xs text-yellow-600 dark:text-slate-400 mt-1 italic"
+            class="mt-1 text-xs italic text-gray-400 underline dark:text-slate-400"
         >
             {{ help }}
         </div>

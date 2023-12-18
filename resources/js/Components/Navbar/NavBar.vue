@@ -24,13 +24,13 @@ const isMenuNavBarActive = ref(false);
 
 <template>
     <nav
-        class="top-0 inset-x-0 fixed bg-gray-50 h-14 z-30 transition-position w-screen lg:w-auto border-b-orange-500 dark:border-b-purple-800 dark:bg-slate-700 border-b-2 shadow-md shadow-slate-300 dark:shadow-gray-900/50"
+        class="top-0 inset-x-0 fixed bg-gray-50 h-14 z-30 transition-position w-screen lg:w-auto border-b-[#075783] dark:border-b-purple-800 dark:bg-slate-700 border-b-2 shadow-md shadow-slate-300 dark:shadow-gray-900/50"
     >
         <div class="flex lg:items-stretch" :class="containerMaxW">
-            <div class="flex flex-1 items-stretch h-14">
+            <div class="flex items-stretch flex-1 h-14">
                 <slot />
             </div>
-            <div class="flex-none items-stretch flex h-14 lg:hidden">
+            <div class="flex items-stretch flex-none h-14 lg:hidden">
                 <NavBarItemPlain
                     @click.prevent="isMenuNavBarActive = !isMenuNavBarActive"
                 >
@@ -41,7 +41,7 @@ const isMenuNavBarActive = ref(false);
                 </NavBarItemPlain>
             </div>
             <div
-                class="max-h-screen-menu overflow-y-auto lg:overflow-visible absolute w-screen top-14 left-0 bg-slate-200 shadow-lg lg:w-auto lg:flex lg:static lg:shadow-none dark:bg-slate-800 rounded-tl-lg"
+                class="absolute left-0 w-screen overflow-y-auto rounded-tl-lg shadow-lg max-h-screen-menu lg:overflow-visible top-14 bg-slate-200 lg:w-auto lg:flex lg:static lg:shadow-none dark:bg-slate-800"
                 :class="[isMenuNavBarActive ? 'block' : 'hidden']"
             >
                 <NavBarMenuList :menu="menu" @menu-click="menuClick" />

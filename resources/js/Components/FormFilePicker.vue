@@ -125,60 +125,63 @@ const upload = (event) => {
 </script>
 
 <template>
-    <div class="flex items-stretch justify-start relative">
-        <div
-            class="flex flex-col w-40 items-center justify-center bg-slate-100 p-2 dark:bg-slate-700 rounded-sm"
-        >
+    <div>
+        <div class="relative flex items-stretch justify-start">
             <div
-                class="inline-flex w-full h-36 rounded-lg bg-slate-200 p-3 mb-5 dark:bg-slate-500 items-center justify-center"
+                class="flex flex-col items-center justify-center w-40 p-2 rounded-sm bg-slate-100 dark:bg-slate-700"
             >
-                <img
-                    :src="[
-                        typeof modelValue === 'string' && modelValue !== null
-                            ? modelValue
-                            : filePreview
-                            ? filePreview
-                            : uploadImageType,
-                    ]"
-                    class="w-full h-full rounded-md"
-                    alt="File Preview"
-                />
+                <div
+                    class="inline-flex items-center justify-center w-full p-3 mb-5 rounded-lg h-36 bg-slate-200 dark:bg-slate-500"
+                >
+                    <img
+                        :src="[
+                            typeof modelValue === 'string' &&
+                            modelValue !== null
+                                ? modelValue
+                                : filePreview
+                                ? filePreview
+                                : uploadImageType,
+                        ]"
+                        class="w-full h-full rounded-md"
+                        alt="File Preview"
+                    />
+                </div>
+
+                <label class="inline-flex">
+                    <BaseButton
+                        as="a"
+                        :class="{
+                            'w-12 h-12': isRoundIcon,
+                            'rounded-r-none': showFilename,
+                        }"
+                        :icon-size="isRoundIcon ? 24 : undefined"
+                        :label="isRoundIcon ? null : label"
+                        :icon="icon"
+                        :color="color"
+                        :rounded-full="isRoundIcon"
+                        :small="small"
+                    />
+                    <input
+                        ref="root"
+                        type="file"
+                        class="absolute top-0 left-0 w-full h-full outline-none opacity-0 cursor-pointer -z-1"
+                        :accept="accept"
+                        @input="upload"
+                    />
+                </label>
             </div>
 
-            <label class="inline-flex">
-                <BaseButton
-                    as="a"
-                    :class="{
-                        'w-12 h-12': isRoundIcon,
-                        'rounded-r-none': showFilename,
-                    }"
-                    :icon-size="isRoundIcon ? 24 : undefined"
-                    :label="isRoundIcon ? null : label"
-                    :icon="icon"
-                    :color="color"
-                    :rounded-full="isRoundIcon"
-                    :small="small"
-                />
-                <input
-                    ref="root"
-                    type="file"
-                    class="absolute top-0 left-0 w-full h-full opacity-0 outline-none cursor-pointer -z-1"
-                    :accept="accept"
-                    @input="upload"
-                />
-            </label>
+            <div
+                v-if="showFilename"
+                class="px-4 py-2 bg-gray-100 border border-gray-200 rounded-r dark:bg-slate-800 dark:border-slate-700"
+            >
+                <span class="text-ellipsis line-clamp-1">
+                    {{ file.name }}
+                </span>
+            </div>
         </div>
-
-        <div
-            v-if="showFilename"
-            class="px-4 py-2 bg-gray-100 dark:bg-slate-800 border-gray-200 dark:border-slate-700 border rounded-r"
-        >
-            <span class="text-ellipsis line-clamp-1">
-                {{ file.name }}
-            </span>
+        <div v-if="error" class="form-error">
+            <span class="text-xs italic text-red-500"> {{ error }}</span>
         </div>
-    </div>
-    <div v-if="error" class="form-error">
-        <span class="text-xs italic text-red-500"> {{ error }}</span>
     </div>
 </template>

@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\Cabor\CaborCollection;
-use App\Http\Resources\Cabor\CaborResource;
 use Inertia\Inertia;
+use App\Authorizable;
 use App\Models\Cabor;
 use Inertia\Response;
 use Illuminate\Http\Request;
@@ -13,10 +12,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
+use App\Http\Resources\Cabor\CaborResource;
+use App\Http\Resources\Cabor\CaborCollection;
 use ProtoneMedia\LaravelQueryBuilderInertiaJs\InertiaTable;
 
 class CaborController extends Controller
 {
+    use Authorizable;
+
     /**
      * Display a listing of the resource.
      */

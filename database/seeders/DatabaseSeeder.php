@@ -31,10 +31,10 @@ class DatabaseSeeder extends Seeder
         ]);
 
         \App\Models\User::factory(5)->create();
-        $this->call(UserRoleSeeder::class);
         $this->call(PostSeeder::class);
         $this->call(CategorySeeder::class);
         $this->call(CaborSeeder::class);
+        $this->call(UserRoleSeeder::class);
 
         // \App\Models\Cabor::factory(10)->create();
 

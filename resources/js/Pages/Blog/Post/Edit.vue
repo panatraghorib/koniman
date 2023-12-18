@@ -43,15 +43,12 @@ const form = useForm({
     meta_og_image: post.meta_og_image,
     meta_og_url: post.meta_og_url,
     published_at: post.published_at,
-    approval: post.approval,
 });
 
 function submit() {
     form.transform((data) => ({
         ...data,
-    })).post(`/blog/post/update/${form.id}`, {
-        preserveScroll: true,
-    });
+    })).post(`/blog/post/update/${form.id}`);
 }
 </script>
 
@@ -74,13 +71,6 @@ function submit() {
                     small
                 />
             </SectionTitleLineWithButton>
-
-            <!-- {{ form }} -->
-            <!-- <pre>
-                <code>
-                    {{ $page.props }}
-                </code>
-            </pre> -->
 
             <CardBox @submit.prevent="submit" is-form>
                 <FormField label="Judul" required>
@@ -167,24 +157,6 @@ function submit() {
                         :error="form.errors.gender"
                     />
                 </FormField>
-
-                <div v-if="$page.props.user.roles == 'Superadmin'">
-                    <FormField label="Persetujuan">
-                        <FormCheckRadioGroup
-                            v-model="form.approval"
-                            name="approval"
-                            type="switch"
-                            :options="{
-                                1:
-                                    form.approval === true
-                                        ? 'Ya'
-                                        : form.approval === false
-                                        ? 'Tidak'
-                                        : 'Tidak',
-                            }"
-                        />
-                    </FormField>
-                </div>
 
                 <BaseDivider />
 

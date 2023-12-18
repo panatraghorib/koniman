@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Authorizable;
 use App\Models\Atlite;
 use Illuminate\Http\Request;
 
 class AtliteController extends Controller
 {
+    use Authorizable;
+
     /**
      * Display a listing of the resource.
      */

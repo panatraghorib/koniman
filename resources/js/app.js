@@ -19,6 +19,7 @@ import FormDatePicker from "@/Components/FormDatePicker.vue";
 import "vue-toastification/dist/index.css";
 import "sweetalert2/dist/sweetalert2.min.css";
 import Toast, { TYPE } from "vue-toastification";
+import { has } from "lodash";
 
 const permissions = authPermission();
 
@@ -63,7 +64,7 @@ const toastOptions = {
             hideProgressBar: true,
         },
     },
-    position: "top-center",
+    position: "top-right",
     timeout: 5000,
     closeOnClick: true,
     pauseOnFocusLoss: true,
@@ -87,6 +88,7 @@ const toastOptions = {
         return toast;
     },
 };
+
 const pinia = createPinia();
 
 createInertiaApp({
@@ -107,6 +109,19 @@ createInertiaApp({
         app.component("BaseDivider", BaseDivider);
         // app.provide("permissions", permissions);
         app.config.globalProperties.$auth = permissions;
+        app.mixin({
+            methods: {
+                can: function (permission) {
+                    var allPermissions = this.$page.props.user_permissions;
+
+                    if (allPermissions.includes(permission)) {
+                        return true;
+                    }
+
+                    return false;
+                },
+            },
+        });
         app.mount(el);
 
         return app;

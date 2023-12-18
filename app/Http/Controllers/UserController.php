@@ -2,30 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UserAddRequest;
-use App\Http\Requests\UserUpdateRequest;
-use App\Models\Cabor;
 use App\Models\Role;
 use App\Models\User;
+use Inertia\Inertia;
+use App\Authorizable;
+use App\Models\Cabor;
+use Inertia\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\URL;
-use Inertia\Inertia;
-use Inertia\Response;
-use ProtoneMedia\LaravelQueryBuilderInertiaJs\InertiaTable;
-use Spatie\QueryBuilder\AllowedFilter;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\UserAddRequest;
 use Spatie\QueryBuilder\QueryBuilder;
+use Spatie\QueryBuilder\AllowedFilter;
+use App\Http\Requests\UserUpdateRequest;
+use ProtoneMedia\LaravelQueryBuilderInertiaJs\InertiaTable;
 
 class UserController extends Controller
 {
+    use Authorizable;
+
     /**
      * Display a listing of the resource.
      */
     public function index(): Response
     {
-
         $globalSearch = AllowedFilter::callback('global', function ($query, $value) {
             $query->where(function ($query) use ($value) {
                 Collection::wrap($value)->each(function ($value) use ($query) {
@@ -38,7 +40,7 @@ class UserController extends Controller
 
         $numberPaginate = request('perPage') ?? 10;
 
-        $users = QueryBuilder::for(User::whereNot('id', 1))
+        $users = QueryBuilder::for(User::with('roles')->whereNot('id', 1))
             ->defaultSort('id')
             ->allowedSorts(['id', 'name', 'email'])
             ->allowedFilters(['id', 'name', 'email', $globalSearch])
@@ -48,7 +50,6 @@ class UserController extends Controller
 
         return Inertia::render('Users/Index', [
             'users' => $users,
-
         ])->table(
             function (InertiaTable $table) {
                 $table
@@ -57,11 +58,11 @@ class UserController extends Controller
                     ->column(key: 'name', searchable: true, sortable: true, canBeHidden: false, label: 'Nama')
                     ->column(key: 'email', searchable: true, sortable: true)
                     ->column(key: 'mobile', label: 'Kontak')
+                    ->column(key: 'roles', label: 'Role', searchable: false, sortable: false)
                     ->column(label: 'Actions');
             }
         );
     }
-
 
     public function sample_user(Request $request): Response
     {
@@ -93,11 +94,6 @@ class UserController extends Controller
      */
     public function store(UserAddRequest $request)
     {
-
-        // $roles = ($request->roles) ?? [];
-        // dump($request->all());
-        // dump(array_map('intval', $roles));
-        // exit;
         DB::beginTransaction();
 
         $user = User::create([
@@ -159,12 +155,11 @@ class UserController extends Controller
                 'date_of_birth' => $user->date_of_birth,
                 'gender' => $user->gender,
                 'organization_id' => $user->organization_id,
-                // 'role' => $user->roles()->get(['id','name']),
-                'roles' => $user->roles ?? null,
+                'roles' => $user->roles()->get(['id', 'name']),
+                // 'roles' => $user->roles ?? null,
                 'avatar' => $user->avatar ? URL::route('image', ['path' => $user->avatar, 'w' => 100, 'h' => 100, 'fit' => 'crop']) : null,
                 'created_by' => $user->created_by,
             ],
-
             'roles' => $roles->map(fn ($role) => [
                 'id' => $role->id,
                 'label' => $role->name,
@@ -234,6 +229,7 @@ class UserController extends Controller
                 'text' => 'You cannot delete your self!',
             ]);
         }
+
         $user->delete();
 
         activity('User')

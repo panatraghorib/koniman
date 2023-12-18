@@ -108,7 +108,7 @@ class User extends Authenticatable
 
     public function cabor(): BelongsTo
     {
-        return $this->belongsTo(Cabor::class, 'organization_id', 'id');
+        return $this->belongsTo(Cabor::class, 'organization_id', 'id')->withDefault();
     }
 
     public function posts(): HasMany

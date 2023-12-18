@@ -1,6 +1,6 @@
 import {
     mdiMonitor,
-    mdiDotsHorizontal,
+    mdiChevronRight,
     mdiSquareEditOutline,
     mdiTable,
     mdiViewList,
@@ -14,26 +14,30 @@ export default [
         route: "dashboard",
         icon: mdiMonitor,
         label: "Dashboard",
+        default: true,
     },
     {
         route: "user.index",
         icon: mdiAccountGroup,
-        label: "Pengguna",
-        permission: "view_user",
+        label: "User",
+        permission: ["view_user"],
     },
     {
         label: "Blog",
         icon: mdiViewList,
+        permission: ["view_post"],
         menu: [
             {
                 label: "Artikel",
                 route: "post.index",
-                icon: mdiDotsHorizontal,
+                icon: mdiChevronRight,
+                permission: ["view_post"],
             },
             {
                 label: "Kategori",
                 route: "category.index",
-                icon: mdiDotsHorizontal,
+                icon: mdiChevronRight,
+                permission: ["view_category"],
             },
         ],
     },
@@ -53,7 +57,7 @@ export default [
         route: "cabor.index",
         label: "Cabor/Organisasi",
         icon: mdiTable,
-        permission: "view_cabor",
+        permission: ["view_cabor"],
     },
     {
         to: "/ui",

@@ -148,7 +148,7 @@ const confirmDelete = (id) => {
 
             <CardBox has-outline has-table>
                 <div
-                    class="flex flex-row p-2 justify-end border-b"
+                    class="flex flex-row justify-end p-2 border-b"
                     v-if="$auth.can('add_user')"
                 >
                     <BaseButton
@@ -162,13 +162,13 @@ const confirmDelete = (id) => {
                 </div>
 
                 <!-- <template #table-wrapper>
-                    <div class="flex flex-col bg-red-300 pt-40">
+                    <div class="flex flex-col pt-40 bg-red-300">
                         <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                             <div
-                                class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8"
+                                class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8"
                             >
                                 <div
-                                    class="shadow border-b border-gray-200 relative"
+                                    class="relative border-b border-gray-200 shadow"
                                 ></div>
                             </div>
                         </div>
@@ -184,7 +184,7 @@ const confirmDelete = (id) => {
                 >
                     <template v-slot:tableReset="slotProps">
                         <button
-                            class="bg-slate-200 border rounded-md shadow-sm p-1 inline-flex justify-center text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mx-1 my-2"
+                            class="inline-flex justify-center p-1 mx-1 my-2 text-sm font-medium text-gray-700 border rounded-md shadow-sm bg-slate-200 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             @click.prevent="slotProps.onClick"
                         >
                             <BaseIcon :path="mdiRefresh" :size="`16`" />
@@ -219,10 +219,10 @@ const confirmDelete = (id) => {
                     <template v-slot:tableGlobalSearch="slotProps">
                         <div class="flex flex-row w-full mx-1">
                             <div
-                                class="relative text-gray-600 focus-within:text-gray-400 w-full"
+                                class="relative w-full text-gray-600 focus-within:text-gray-400"
                             >
                                 <span
-                                    class="absolute inset-y-0 left-0 flex items-center pl-2 pt-3"
+                                    class="absolute inset-y-0 left-0 flex items-center pt-3 pl-2"
                                 >
                                     <BaseIcon
                                         :path="mdiFileSearch"
@@ -234,11 +234,17 @@ const confirmDelete = (id) => {
                                     @input="
                                         slotProps.onChange($event.target.value)
                                     "
-                                    class="mt-2 block w-full pl-9 text-sm rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 dark:bg-slate-700 dark:border-slate-600"
+                                    class="block w-full mt-2 text-sm border-gray-300 rounded-md shadow-sm pl-9 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-slate-700 dark:border-slate-600"
                                     autocomplete="off"
                                 />
                             </div>
                         </div>
+                    </template>
+
+                    <template #cell(roles)="{ item: user }">
+                        {{
+                            user.roles[0] ? user.roles[0].name : "Role not set"
+                        }}
                     </template>
 
                     <template #cell(actions)="{ item: user }">
@@ -251,7 +257,7 @@ const confirmDelete = (id) => {
                                     class="text-white"
                                     :icon="mdiPencilCircle"
                                     small
-                                    v-if="$auth.can('edit_user')"
+                                    v-if="can('edit_user')"
                                 />
                                 <BaseButton
                                     as="button"
@@ -260,7 +266,7 @@ const confirmDelete = (id) => {
                                     :icon="mdiDeleteCircle"
                                     small
                                     @click="confirmDelete(user.id)"
-                                    v-if="$auth.can('delete_user')"
+                                    v-if="can('delete_user')"
                                 />
                             </BaseButtons>
                         </div>
